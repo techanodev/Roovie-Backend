@@ -1,14 +1,13 @@
-import { PhoneNumber } from "../models/users/users.models";
-import axios, { AxiosRequestConfig } from "axios"
+import { PhoneNumber } from '../models/users/users.models'
+import axios, { AxiosRequestConfig } from 'axios'
 import fs = require('fs')
 
 import dotenv = require('dotenv')
-import HttpError from "../errors/http.errors";
-import FileService from "./file.services";
+import HttpError from '../errors/http.errors'
+import FileService from './file.services'
 dotenv.config()
 
 export default class SmsService {
-
     /**
      * Send a sms to a phone number by **ParsGreen** API
      * @param to the phone number you want send sms message
@@ -17,22 +16,22 @@ export default class SmsService {
      * @throws In case of any error **{@link HttpError}**
      */
     public static send = async (to: PhoneNumber, message: string) => {
+        if (process.env.NODE_ENV === 'dev') return
         const token = process.env.SMS_TOKEN
 
         const phone = `+${to.countryCode}${to.number}`
 
-
         const url = 'http://sms.parsgreen.ir/Apiv2/Message/SendSms'
         const data = {
-            "Mobiles": [phone],
-            "SmsBody": message
+            Mobiles: [phone],
+            SmsBody: message,
         }
 
         const config: AxiosRequestConfig = {
             headers: {
-                'Authorization': `basic apikey:${token}`,
-                'Content-Type': 'application/json'
-            }
+                Authorization: `basic apikey:${token}`,
+                'Content-Type': 'application/json',
+            },
         }
 
         const result = await axios.post(url, JSON.stringify(data), config)
@@ -47,10 +46,14 @@ export default class SmsService {
      * @param values keys that uses in template like {{APP_NAME}}
      * @example sendTemplate({phone: "9123730014"}, 'validation_code_signup', {'code': '1234'})
      */
-    public static sendTemplate = async (to: PhoneNumber, template: string, values: { [key: string]: string }) => {
+    public static sendTemplate = async (
+        to: PhoneNumber,
+        template: string,
+        values: { [key: string]: string }
+    ) => {
         const path = FileService.absolutePath(`templates/sms/fa/${template}.txt`)
         let text = fs.readFileSync(path).toString()
-        text = text.replace('{{APP_NAME}}', (process.env.APP_NAME ?? 'Rovie'))
+        text = text.replace('{{APP_NAME}}', process.env.APP_NAME ?? 'Rovie')
         for (const value of Object.keys(values)) {
             text = text.replace(`{{${value.toUpperCase()}}}`, values[value])
         }

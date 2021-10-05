@@ -1,5 +1,5 @@
-import { Column, DataType, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
-import { PhoneNumber } from "./users.models";
+import { Column, DataType, Default, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript'
+import { PhoneNumber } from './users.models'
 
 export type ValidationCodeTypes = 'create_account' | 'login' | 'forgot_password' | 'other'
 
@@ -18,22 +18,22 @@ export default class ValidationCode extends Model<ValidationCode> {
     @Column
     code!: string
 
+    @Default('98')
     @Column({ field: 'country_code' })
-    private _countryCode?: string
+    countryCode?: string
 
     @Column({ field: 'phone_number' })
-    private _phoneNumber!: string
+    phone!: string
 
     @Column({ field: 'validation_type', type: DataType.STRING })
     type!: ValidationCodeTypes
 
-    public set phoneNumber(phoneNumber: PhoneNumber) {
-        this._phoneNumber = phoneNumber.number
-        this._countryCode = phoneNumber.countryCode
-    }
+    @Column({ field: 'updated_at' })
+    updatedAt?: Date
 
-    public get phoneNumber() {
-        return { number: this._phoneNumber, countryCode: this._countryCode }
+    public set phoneNumber(phoneNumber: PhoneNumber) {
+        this.phone = phoneNumber.number
+        this.countryCode = phoneNumber.countryCode ?? '98'
     }
 
     public setRandomNumber(len = 5) {
@@ -43,7 +43,6 @@ export default class ValidationCode extends Model<ValidationCode> {
     }
 
     private random(min: number, max: number) {
-        return Math.random() * (max - min) + min;
+        return Math.random() * (max - min) + min
     }
-
 }

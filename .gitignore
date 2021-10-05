@@ -1,5 +1,8 @@
 node_modules
 dist
+.vscode
+public
+private
 
 /.env
 /.env.test
