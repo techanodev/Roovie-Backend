@@ -4,7 +4,8 @@
   "description": "Roovie is a special movie website.",
   "main": "app.ts",
   "scripts": {
-    "test": "jest --watch --silent",
+    "test": "jest --silent",
+    "test-dev": "jest --silent --watch",
     "build": "tsc",
     "start": "ts-node src/app.ts",
     "migrate": "ts-node src/scripts/migrate.ts",
