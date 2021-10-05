@@ -4,7 +4,9 @@ import fs = require('fs')
 
 import dotenv = require('dotenv')
 import HttpError from '../errors/http.errors'
-import FileService from './file.services'
+require('../config/lang')
+import i18n = require('i18n')
+
 dotenv.config()
 
 export default class SmsService {
@@ -51,9 +53,8 @@ export default class SmsService {
         template: string,
         values: { [key: string]: string }
     ) => {
-        const path = FileService.absolutePath(`templates/sms/fa/${template}.txt`)
-        let text = fs.readFileSync(path).toString()
-        text = text.replace('{{APP_NAME}}', process.env.APP_NAME ?? 'Rovie')
+        let text = i18n.__(template.toUpperCase())
+        text = text.replace('{{APP_NAME}}', process.env.APP_NAME ?? 'Roovie')
         for (const value of Object.keys(values)) {
             text = text.replace(`{{${value.toUpperCase()}}}`, values[value])
         }
