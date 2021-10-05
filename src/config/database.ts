@@ -10,13 +10,13 @@ function newSequelize(): Sequelize {
         sequelize = new Sequelize(process.env.DB_NAME ?? '', process.env.DB_USER ?? '', process.env.DB_PASSWORD ?? '', {
             host: process.env.DB_HOST ?? '',
             dialect: 'mysql',
-            models: [__dirname + '../models/**/**/*']
+            models: [__dirname + '/../models/**/**/*']
         })
     } else {
         sequelize = new Sequelize('', '', '', {
             dialect: 'sqlite',
             storage: 'db.sqlite',
-            models: [__dirname + '../models/**/**/*']
+            models: [__dirname + '/../models/**/**/*']
         })
     }
 
