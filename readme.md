@@ -1,3 +1,5 @@
+[![Node.js CI](https://github.com/Techano-Developers/Roovie-Backend/actions/workflows/node.js.yml/badge.svg)](https://github.com/Techano-Developers/Roovie-Backend/actions/workflows/node.js.yml)
+
 # Roovie Backend
 
 **Roovie** is a service that aims to create an environment for watching movies with other people at the same time.
