@@ -1,4 +1,13 @@
-import { Column, DataType, Default, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript'
+import {
+    AutoIncrement,
+    Column,
+    DataType,
+    Default,
+    Model,
+    PrimaryKey,
+    Table,
+    Unique,
+} from 'sequelize-typescript'
 import { PhoneNumber } from './users.models'
 
 export type ValidationCodeTypes = 'create_account' | 'login' | 'forgot_password' | 'other'
@@ -10,6 +19,7 @@ export type ValidationCodeTypes = 'create_account' | 'login' | 'forgot_password'
     updatedAt: 'updated_at',
 })
 export default class ValidationCode extends Model<ValidationCode> {
+    @AutoIncrement
     @PrimaryKey
     @Column
     id?: number

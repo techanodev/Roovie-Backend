@@ -1,17 +1,26 @@
-import { AllowNull, Column, Model, NotEmpty, PrimaryKey, Table, Unique } from "sequelize-typescript";
-import { SaveOptions } from "sequelize";
-import HttpError from "../../errors/http.errors";
+import {
+    AllowNull,
+    AutoIncrement,
+    Column,
+    Model,
+    NotEmpty,
+    PrimaryKey,
+    Table,
+    Unique,
+} from 'sequelize-typescript'
+import { SaveOptions } from 'sequelize'
+import HttpError from '../../errors/http.errors'
 
 export enum Gender {
     Male = 1,
-    Female = 0
+    Female = 0,
 }
 
-/** 
+/**
  * Every where we need pass a phone number, we should use {@link PhoneNumber}.
- * because in this case we have country code and number in one value 
-*/
-export type PhoneNumber = { countryCode?: string, number: string }
+ * because in this case we have country code and number in one value
+ */
+export type PhoneNumber = { countryCode?: string; number: string }
 
 @Table({
     tableName: 'users',
@@ -19,11 +28,10 @@ export type PhoneNumber = { countryCode?: string, number: string }
     paranoid: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-    deletedAt: 'deleted_at'
+    deletedAt: 'deleted_at',
 })
 export default class User extends Model<User> {
-
-    @AllowNull(false)
+    @AutoIncrement
     @PrimaryKey
     @Column
     id?: number
@@ -70,9 +78,9 @@ export default class User extends Model<User> {
     }
 
     set phoneNumber(phoneNumber: PhoneNumber) {
-        if (!phoneNumber.countryCode)
-            phoneNumber.countryCode = '98'
-        this._phoneNumber = `+${phoneNumber.countryCode}${phoneNumber.number}`
+        if (!phoneNumber.countryCode) phoneNumber.countryCode = '98'
+        this.countryCode = phoneNumber.countryCode
+        this._phoneNumber = phoneNumber.number
     }
 
     get phoneNumber() {
@@ -84,14 +92,16 @@ export default class User extends Model<User> {
      * @param options save options {@link SaveOptions}
      * @returns instance of the user created
      */
-    public async save(options?: SaveOptions<User>): Promise<this> {
-        const user = await User.findOne({ where: { _phoneNumber: this.phoneNumber.number, countryCode: this.phoneNumber.countryCode } })
+    public async saveUser(options?: SaveOptions<User>): Promise<User> {
+        const user = await User.findOne({
+            where: {
+                _phoneNumber: this.phoneNumber.number,
+                countryCode: this.phoneNumber.countryCode ?? '98',
+            },
+        })
         // before create a user, we check a user with the phone number in pass create account or not
-        if (!user)
-            throw new HttpError(
-                'شماره تلفن وارد شده قبلا توسط کاربر دیگری استفاده شده است.',
-                401)
-        return super.save(options)
+        if (user)
+            throw new HttpError('شماره تلفن وارد شده قبلا توسط کاربر دیگری استفاده شده است.', 401)
+        return this.save(options)
     }
-
 }

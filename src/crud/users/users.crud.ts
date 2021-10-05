@@ -7,8 +7,23 @@ import i18n = require('i18n')
 import '../../services/date.services'
 
 export default class UserCrud extends Crud<User> {
+    /**
+     * Create new account with user validation code
+     * @param code validation code for create a account for user
+     * @returns instance of the account created {@link User}
+     */
     public createAccount = async (code: string) => {
-        this.model.save()
+        await UserCrud.checkValidationCode(
+            this.model.phoneNumber,
+            'create_account',
+            code,
+            true,
+            true
+        )
+        this.model = await this.model.saveUser()
+        if (process.env.NODE_ENV == 'dev' && this.model.id)
+            await this.model.destroy({ force: true })
+        return this.model
     }
 
     /**
