@@ -4,7 +4,7 @@ import FileService from '../services/file.services'
 
 export type ResourceType = { [name: string]: number | string | ResourceType[] | ResourceType | Date | undefined | null | boolean }
 
-export default class ResourceService<T extends Model> {
+export default class Resource<T extends Model> {
     protected model: T
     protected moreFields: string[]
 
@@ -51,7 +51,7 @@ export default class ResourceService<T extends Model> {
             for (let i = 0; i < fields.length; i++) {
                 const field = fields[i]
                 if (!(this.model instanceof Model) || !(this.model.get(field))) continue
-                this.model.set(field, ResourceService.convertPath(this.model.get(field) as string))
+                this.model.set(field, Resource.convertPath(this.model.get(field) as string))
             }
             return this
         }
@@ -63,7 +63,7 @@ export default class ResourceService<T extends Model> {
             const modelValue = this.model.get(field)
             if (fs.existsSync(modelValue as string)) {
                 // if the value of file as default value, if it was exists
-                result = ResourceService.convertPath(this.model.get(field) as string)
+                result = Resource.convertPath(this.model.get(field) as string)
             }
             this.model.set(field, result)
         }
