@@ -5,8 +5,8 @@ require('./config/config')
 require('./config/lang')
 
 const app = express()
-const port = Number.parseInt(process.env.APP_PORT ?? '3000') ?? 3000
-const hostname = process.env.APP_HOST ?? 'localhost'
+const port = Number.parseInt(process.env.SERVER_PORT ?? '3000') ?? 3000
+const hostname = process.env.SERVER_HOST ?? 'localhost'
 
 app.listen(port, hostname, () => {
     connectDatabase(() => {
