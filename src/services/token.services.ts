@@ -44,6 +44,19 @@ export default class TokenService {
         })
     }
 
+    /**
+     * Check the tokens starts with bearer
+     * @param token the token to check
+     * @returns 
+     */
+    public static checkBearerToken(token: string): Promise<User> {
+        const regex = /Bearer [A-Za-z0-9\-._~+/]+=*/g
+        if (!token || !regex.test(token))
+            throw new HttpError(i18n.__('REGISTER_TOKEN_ENTER'), 403)
+
+        return this.checkToken(token.split(' ')[1])
+    }
+
     private static getSecretKey(): string {
         const secret = process.env.JWT_SECRET
         if (!secret)

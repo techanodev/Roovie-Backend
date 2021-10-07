@@ -1,5 +1,6 @@
 import { Request } from 'express'
 import { Model } from 'sequelize-typescript'
+import { PhoneNumber } from '../models/users/users.models'
 import Pagination, { PaginationI } from '../types/pagination.types'
 import '../utils/String'
 
@@ -20,6 +21,10 @@ export default class RequestService {
         return RequestService.newInstance(req).pagination(pagination)
     }
 
+    public static phone(req: Request): PhoneNumber {
+        return RequestService.newInstance(req).phone()
+    }
+
     public pagination(pagination: PaginationI | Pagination = { page: 1, countPerPage: 10 }): Pagination {
         if (Number(this.req.query.page)) {
             pagination.page = Number(this.req.query.page)
@@ -38,6 +43,11 @@ export default class RequestService {
     public toArray = <T>(value: T | T[]): T[] => {
         if (Array.isArray(value)) return value
         return [value]
+    }
+
+    public phone(): PhoneNumber {
+        const { country_code, phone_number } = this.req.body
+        return { number: phone_number, countryCode: country_code ?? '98' }
     }
 
 }
