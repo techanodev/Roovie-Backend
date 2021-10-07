@@ -42,7 +42,7 @@ path += '/'
 
 const envFile = path + '.env'
 
-if (fs.existsSync(envFile)) {
+if (!fs.existsSync(envFile)) {
     fs.copyFileSync(envFile + '.example', envFile)
 }
 

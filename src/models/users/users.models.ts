@@ -8,7 +8,7 @@ import {
     Table,
     Unique,
 } from 'sequelize-typescript'
-import { Includeable, SaveOptions } from 'sequelize'
+import { SaveOptions } from 'sequelize'
 import HttpError from '../../errors/http.errors'
 
 export type UserIncludeOptions = { Role: boolean; Plan: boolean }

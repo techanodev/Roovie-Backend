@@ -2,7 +2,8 @@ import { Request } from 'express'
 import { Model } from 'sequelize-typescript'
 import { PhoneNumber } from '../models/users/users.models'
 import Pagination, { PaginationI } from '../types/pagination.types'
-import '../utils/String'
+import '../services/string.services'
+
 
 import ModelService from './model.services'
 
@@ -46,8 +47,9 @@ export default class RequestService {
     }
 
     public phone(): PhoneNumber {
-        const { country_code, phone_number } = this.req.body
-        return { number: phone_number, countryCode: country_code ?? '98' }
+        const countryCode = this.req.body?.country_code ?? '98'
+        const phoneNumber = this.req.body.phone_number
+        return { number: phoneNumber, countryCode: countryCode ?? '98' }
     }
 
 }

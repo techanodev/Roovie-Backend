@@ -8,6 +8,6 @@
 	"REGISTER_TOKEN_ENTER": "توکن کاربری را وارد نمایید.",
 	"REGISTER_LOGIN_FAIL": "نام کاربری یا رمزعبور نادرست می باشد.",
 	"REGISTER_LOGIN_PHONE_NOT_FOUND": "کاربری با این شماره تلفن یافت نشد.",
-	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{APP_NAME}} خوش آمدید\nکد تایید شما: {{CODE}",
+	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{app_name}} خوش آمدید\nکد تایید شما: {{code}}",
 	"VALIDATION_CODE_SIGNUP": "VALIDATION_CODE_SIGNUP"
 }

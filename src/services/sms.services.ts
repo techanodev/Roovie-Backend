@@ -4,8 +4,8 @@ import fs = require('fs')
 
 import dotenv = require('dotenv')
 import HttpError from '../errors/http.errors'
-require('../config/lang')
 import i18n = require('i18n')
+require('../config/lang')
 
 dotenv.config()
 
@@ -53,8 +53,8 @@ export default class SmsService {
         template: string,
         values: { [key: string]: string }
     ) => {
-        let text = i18n.__(template.toUpperCase())
-        text = text.replace('{{APP_NAME}}', process.env.APP_NAME ?? 'Roovie')
+        values['app_name'] = process.env.APP_NAME ?? 'Roovie'
+        let text = i18n.__(template.toUpperCase(), values)
         for (const value of Object.keys(values)) {
             text = text.replace(`{{${value.toUpperCase()}}}`, values[value])
         }

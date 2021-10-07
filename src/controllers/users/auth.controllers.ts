@@ -1,12 +1,11 @@
 import { Request, Response } from "express"
 import UserCrud from "../../crud/users/users.crud"
-import User from "../../models/users/users.models"
+import User, { Gender } from "../../models/users/users.models"
 import ModelService from "../../services/model.services"
 import ResponseService from "../../services/response.services"
 import Controller from "../controllers"
-require('../config/lang')
+import '../../config/lang'
 import i18n = require('i18n')
-import { ValidationCodeTypes } from "../../models/users/validation.code.models"
 import UserResource from "../../resources/users/users.resources"
 import RequestService from "../../services/request.services"
 
@@ -17,8 +16,9 @@ export default class AuthController extends Controller {
      */
     public static async createUser(req: Request, res: Response) {
         try {
-            this.checkValidationResult(req)
-            const user = ModelService.fillModel(req, new User())
+            AuthController.checkValidationResult(req)
+            const user = ModelService.fillModel(req.body, new User())
+            user.gender = req.body.gender ? Gender.Male : Gender.Female
             user.phoneNumber = RequestService.phone(req)
             const code = req.body.code
             const crud = new UserCrud(user)
@@ -35,7 +35,7 @@ export default class AuthController extends Controller {
      */
     public static async loginUser(req: Request, res: Response) {
         try {
-            this.checkValidationResult(req)
+            AuthController.checkValidationResult(req)
             const phone = RequestService.phone(req)
             const code = req.body.code
             const { user, token } = await UserCrud.login(phone, code)
@@ -64,21 +64,13 @@ export default class AuthController extends Controller {
      * Http request for send a create account validation code
      */
     public static async sendCreateAccountValidationCode(req: Request, res: Response) {
-        this.sendValidationCode(req, res, 'create_account')
-    }
-
-    /**
-     * send validation code for phone number with http request
-     */
-    private static async sendValidationCode(req: Request, res: Response, type: ValidationCodeTypes) {
         try {
-            this.checkValidationResult(req)
-            const phoneNumber = req.body.phone as string
-            const countryCode = req.body.country_code
-            UserCrud.sendValidationCode({ number: phoneNumber, countryCode: countryCode }, type)
-            ResponseService.newInstance(res).setMessage(i18n.__('REGISTER_VALIDATION_CODE_SENT'))
-        } catch (e) {
-            ResponseService.handleError(res, e)
+            AuthController.checkValidationResult(req)
+            const phone = RequestService.phone(req)
+            await UserCrud.sendValidationCode(phone, 'create_account')
+            ResponseService.newInstance(res).setStatus(true).setMessage(i18n.__('REGISTER_VALIDATION_CODE_SENT')).response()
+        } catch (error) {
+            ResponseService.handleError(res, error)
         }
     }
 }

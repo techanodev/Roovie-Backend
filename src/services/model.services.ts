@@ -1,5 +1,5 @@
 import { Model } from 'sequelize-typescript'
-import ValidationError from '../errors/validation.errors'
+import '../services/string.services'
 
 export default class ModelService {
     public static fillModel<T extends Model>(data: any, model: T) {

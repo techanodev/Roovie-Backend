@@ -112,7 +112,7 @@ export default class UserCrud extends Crud<User> {
         validation.type = type
         validation.setRandomNumber()
         await validation.save()
-        await SmsService.sendTemplate(phone, 'validation_code_signup', {
+        await SmsService.sendTemplate(phone, 'SMS_VALIDATION_CODE_SIGNUP', {
             code: validation.code,
         })
         return validation.code
