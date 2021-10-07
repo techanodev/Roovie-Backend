@@ -5,6 +5,7 @@ import SmsService from '../../services/sms.services'
 import Crud from '../crud'
 import i18n = require('i18n')
 import '../../services/date.services'
+import TokenService from '../../services/token.services'
 
 export default class UserCrud extends Crud<User> {
     /**
@@ -12,7 +13,7 @@ export default class UserCrud extends Crud<User> {
      * @param code validation code for create a account for user
      * @returns instance of the account created {@link User}
      */
-    public createAccount = async (code: string) => {
+    public createAccount = async (code: string): Promise<{ token: string, user: User }> => {
         await UserCrud.checkValidationCode(
             this.model.phoneNumber,
             'create_account',
@@ -21,9 +22,10 @@ export default class UserCrud extends Crud<User> {
             true
         )
         this.model = await this.model.saveUser()
-        if (process.env.NODE_ENV == 'dev' && this.model.id)
-            await this.model.destroy({ force: true })
-        return this.model
+        return {
+            token: TokenService.createToken(this.model.id as number),
+            user: this.model
+        }
     }
 
     /**

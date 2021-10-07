@@ -8,8 +8,10 @@ import {
     Table,
     Unique,
 } from 'sequelize-typescript'
-import { SaveOptions } from 'sequelize'
+import { Includeable, SaveOptions } from 'sequelize'
 import HttpError from '../../errors/http.errors'
+
+export type UserIncludeOptions = { Role: boolean; Plan: boolean }
 
 export enum Gender {
     Male = 1,
@@ -31,6 +33,7 @@ export type PhoneNumber = { countryCode?: string; number: string }
     deletedAt: 'deleted_at',
 })
 export default class User extends Model<User> {
+
     @AutoIncrement
     @PrimaryKey
     @Column

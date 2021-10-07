@@ -2,6 +2,8 @@
 	"REGISTER_VALIDATION_CODE_EXPIRE": "کد تایید وارد شده منقضی شده است.",
 	"REGISTER_VALIDATION_CODE_INVALID": "کد تایید وارد شده نادرست می باشد.",
 	"REGISTER_VALIDATION_CODE_SENT": "کد تایید ثبت نام برای شماره تلفن وارد شده ارسال شد.",
+	"REGISTER_JWT_SECRET_ERROR": "سکرت کد برای ایجاد توکن یافت نشد، لطفا تنظیمات env را بررسی نمایید.",
+	"REGISTER_TOKEN_INVALID": "توکن نامعتبر می باشد.",
 	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{APP_NAME}} خوش آمدید\nکد تایید شما: {{CODE}",
 	"VALIDATION_CODE_SIGNUP": "VALIDATION_CODE_SIGNUP"
 }

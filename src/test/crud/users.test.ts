@@ -2,7 +2,8 @@ import UserCrud from '../../crud/users/users.crud'
 import User, { Gender, PhoneNumber } from '../../models/users/users.models'
 import '../config.test'
 import faker = require('faker')
-import HttpError from '../../errors/http.errors'
+import crypto = require('crypto')
+import TokenService from '../../services/token.services'
 
 const phone = { number: faker.phone.phoneNumber('912#######') }
 
@@ -34,15 +35,21 @@ test('Send validation code', async () => {
 
 test('Create account', async () => {
     process.env.NODE_ENV = 'dev'
+    process.env.JWT_SECRET = crypto.randomBytes(256).toString('base64')
 
     const code = await UserCrud.sendValidationCode(phone, 'create_account')
 
-    let user = fakeUser(phone)
+    const userFake = fakeUser(phone)
 
-    const userCreate = new UserCrud(user)
-    user = await userCreate.createAccount(code)
+    const userCreate = new UserCrud(userFake)
+    const { token, user } = await userCreate.createAccount(code)
 
-    expect(user.id).toBeGreaterThan(0)
+    const userResult = await TokenService.checkToken(token)
+
+    if (process.env.NODE_ENV == 'dev' && user.id)
+        await user.destroy({ force: true })
+
+    expect(userResult.id).toBe(user.id)
 })
 
 const fakeUser = (phone: PhoneNumber) => {

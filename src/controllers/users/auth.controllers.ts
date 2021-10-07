@@ -21,7 +21,7 @@ export default class AuthController extends Controller {
             const crud = new UserCrud(user)
             const result = await crud.createAccount(code)
             const response = new ResponseService(res)
-            response.setStatus(true).setStatusCode(201).set('token', result).response()
+            response.setStatus(true).setStatusCode(201).set('token', result.token).response()
         } catch (e) {
             ResponseService.handleError(res, e)
         }
