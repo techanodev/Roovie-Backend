@@ -4,6 +4,8 @@
 	"REGISTER_VALIDATION_CODE_SENT": "کد تایید ثبت نام برای شماره تلفن وارد شده ارسال شد.",
 	"REGISTER_JWT_SECRET_ERROR": "سکرت کد برای ایجاد توکن یافت نشد، لطفا تنظیمات env را بررسی نمایید.",
 	"REGISTER_TOKEN_INVALID": "توکن نامعتبر می باشد.",
+	"REGISTER_LOGIN_FAIL": "نام کاربری یا رمزعبور نادرست می باشد.",
+	"REGISTER_LOGIN_PHONE_NOT_FOUND": "کاربری با این شماره تلفن یافت نشد.",
 	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{APP_NAME}} خوش آمدید\nکد تایید شما: {{CODE}",
 	"VALIDATION_CODE_SIGNUP": "VALIDATION_CODE_SIGNUP"
 }

@@ -7,13 +7,18 @@ import i18n = require('i18n')
 import '../../services/date.services'
 import TokenService from '../../services/token.services'
 
+export type AuthResult = { token: string, user: User }
+
 export default class UserCrud extends Crud<User> {
+
+    static modelName = 'کاربر'
+
     /**
      * Create new account with user validation code
      * @param code validation code for create a account for user
      * @returns instance of the account created {@link User}
      */
-    public createAccount = async (code: string): Promise<{ token: string, user: User }> => {
+    public createAccount = async (code: string): Promise<AuthResult> => {
         await UserCrud.checkValidationCode(
             this.model.phoneNumber,
             'create_account',
@@ -25,6 +30,35 @@ export default class UserCrud extends Crud<User> {
         return {
             token: TokenService.createToken(this.model.id as number),
             user: this.model
+        }
+    }
+
+    /**
+     * Send a validation code to user for login 
+     * @param phone the phone number that want to receive login validation code
+     */
+    public static async sendLoginValidationCode(phone: PhoneNumber): Promise<string> {
+        const user = await User.findOne({ where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? 98 } })
+        if (!user)
+            throw new HttpError(i18n.__('REGISTER_LOGIN_PHONE_NOT_FOUND'), 401)
+        return await UserCrud.sendValidationCode(phone, 'login')
+    }
+
+    /**
+     * Login user to account and return a user token
+     * @param phone user phone number that want to login
+     * @param code Check validation code
+     * @returns instance of user
+     */
+    public static async login(phone: PhoneNumber, code: string): Promise<AuthResult> {
+        await UserCrud.checkValidationCode(phone, 'login', code, true, true)
+        const user = await User.findOne({ where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? '98' } })
+        if (!user || !user.id) {
+            throw HttpError.message.model.notFound(this.modelName)
+        }
+        return {
+            user: user,
+            token: TokenService.createToken(user.id)
         }
     }
 

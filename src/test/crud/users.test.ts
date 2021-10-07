@@ -33,7 +33,7 @@ test('Send validation code', async () => {
     expect(re).toBe(true)
 })
 
-test('Create account', async () => {
+test('Create account and Login', async () => {
     process.env.NODE_ENV = 'dev'
     process.env.JWT_SECRET = crypto.randomBytes(256).toString('base64')
 
@@ -45,11 +45,17 @@ test('Create account', async () => {
     const { token, user } = await userCreate.createAccount(code)
 
     const userResult = await TokenService.checkToken(token)
-
-    if (process.env.NODE_ENV == 'dev' && user.id)
-        await user.destroy({ force: true })
-
     expect(userResult.id).toBe(user.id)
+
+    const validationCode = await UserCrud.sendLoginValidationCode(phone)
+    const loginResult = await UserCrud.login(phone, validationCode)
+
+    expect(loginResult.user.id).toBe(user.id)
+
+    expect((await TokenService.checkToken(loginResult.token)).id).toBe(user.id)
+
+    await user.destroy({ force: true })
+
 })
 
 const fakeUser = (phone: PhoneNumber) => {
