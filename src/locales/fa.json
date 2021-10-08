@@ -11,6 +11,7 @@
 	"REGISTER_REQUEST_NO_USERNAME": "لطفا نام کاربری خود را وارد نمایید.",
 	"REGISTER_REQUEST_NO_LASTNAME": "لطفا نام خانوادگی خود را وارد نمایید.",
 	"REGISTER_REQUEST_DUPLICATE_USERNAME": "نام کاربری قبلا توسط فرد دیگری انتخاب شده است.",
+	"REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER": "شماره تلفن وارد شده قبلا توسط فرد دیگری استفاده شده است.",
 	"REGISTER_REQUEST_VALIDATION_CODE": "کد تایید ارسال شده به تلفن همراه خود را وارد نمایید.",
 	"REGISTER_LOGIN_PHONE_NOT_FOUND": "کاربری با این شماره تلفن یافت نشد.",
 	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{app_name}} خوش آمدید\nکد تایید شما: {{code}}",

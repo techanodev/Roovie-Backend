@@ -44,6 +44,13 @@ export default class UserCrud extends Crud<User> {
         return await UserCrud.sendValidationCode(phone, 'login')
     }
 
+    public static async sendCreateAccountValidationCode(phone: PhoneNumber): Promise<string> {
+        const user = await User.findOne({ where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? 98 } })
+        if (user)
+            throw new HttpError(i18n.__('REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER'), 401)
+        return await UserCrud.sendValidationCode(phone, 'login')
+    }
+
     /**
      * Login user to account and return a user token
      * @param phone user phone number that want to login

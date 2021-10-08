@@ -70,7 +70,7 @@ export default class AuthController extends Controller {
         try {
             AuthController.checkValidationResult(req)
             const phone = RequestService.phone(req)
-            await UserCrud.sendValidationCode(phone, 'create_account')
+            await UserCrud.sendCreateAccountValidationCode(phone)
             ResponseService.newInstance(res).setStatus(true).setMessage(i18n.__('REGISTER_VALIDATION_CODE_SENT')).response()
         } catch (error) {
             ResponseService.handleError(res, error)

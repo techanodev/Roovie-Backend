@@ -1,3 +1,5 @@
+import i18n = require("i18n")
+
 export default class HttpError extends Error {
     public httpCode: number
 
@@ -9,6 +11,10 @@ export default class HttpError extends Error {
     private static fixModelFormat = (modelName?: string) => {
         if (!modelName) return ''
         return modelName + ' '
+    }
+
+    public static __(httpCode: number, key: string | i18n.TranslateOptions, options: i18n.Replacements) {
+        return new HttpError(i18n.__(key, options), httpCode)
     }
 
     public static message = {
