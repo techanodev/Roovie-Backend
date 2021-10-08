@@ -8,6 +8,7 @@ import '../../config/lang'
 import i18n = require('i18n')
 import UserResource from "../../resources/users/users.resources"
 import RequestService from "../../services/request.services"
+import { validationResult } from "express-validator"
 
 export default class AuthController extends Controller {
 
@@ -17,6 +18,8 @@ export default class AuthController extends Controller {
     public static async createUser(req: Request, res: Response) {
         try {
             AuthController.checkValidationResult(req)
+            const error = validationResult(req)
+            console.log(error)
             const user = ModelService.fillModel(req.body, new User())
             user.gender = req.body.gender ? Gender.Male : Gender.Female
             user.phoneNumber = RequestService.phone(req)

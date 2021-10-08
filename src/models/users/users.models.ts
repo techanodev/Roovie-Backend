@@ -2,6 +2,7 @@ import {
     AllowNull,
     AutoIncrement,
     Column,
+    Default,
     Model,
     NotEmpty,
     PrimaryKey,
@@ -63,8 +64,7 @@ export default class User extends Model<User> {
     @Column({ field: 'phone_number' })
     _phoneNumber!: string
 
-    @AllowNull(false)
-    @NotEmpty
+    @AllowNull(true)
     @Column({ field: 'gender' })
     private _gender?: number
 

@@ -117,4 +117,9 @@ export default class UserCrud extends Crud<User> {
         })
         return validation.code
     }
+
+    public static usernameExists = async (username: string) => {
+        const user = await User.findOne({ where: { username: username } })
+        return user != null
+    }
 }
