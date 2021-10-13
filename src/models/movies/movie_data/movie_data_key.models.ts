@@ -28,17 +28,19 @@ export interface MovieDataKeyI {
     updatedAt: 'updated_at',
 })
 export default class MovieDataKey extends Model<MovieDataKey> implements MovieDataKeyI {
+    @AllowNull(false)
     @NotNull
     @Column
     title!: string
 
+    @AllowNull(false)
     @NotNull
     @Column({ field: 'title_english' })
     titleEnglish!: string
 
     @Default('')
     @Column({ field: 'default_values' })
-    defaultValue?: string | undefined
+    defaultValue?: string
 
     @Column({ type: DataType.NUMBER })
     type!: MovieDataKeyTypes

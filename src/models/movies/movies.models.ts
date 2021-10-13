@@ -69,12 +69,12 @@ export default class Movie extends Model<Movie> implements MovieI {
     @AllowNull(true)
     @Default(1)
     @Column
-    episode?: number | undefined
+    episode?: number
 
     @AllowNull(true)
     @Default(1)
     @Column
-    season?: number | undefined
+    season?: number
 
     @BelongsTo(() => User)
     user?: User
