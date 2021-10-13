@@ -14,7 +14,7 @@ app.use(express.json())
 app.use(express.raw())
 app.use(cors())
 
-const port = Number.parseInt(process.env.SERVER_PORT ?? '3000') ?? 3000
+const port = Number.parseInt(process.env.SERVER_PORT ?? '8000') ?? 8000
 const hostname = process.env.SERVER_HOST ?? 'localhost'
 
 Routes.init(app)
@@ -37,3 +37,5 @@ function connectDatabase(listener: CallableFunction) {
             console.error('Database Authenticate Error:', e.message)
         })
 }
+
+export default app
