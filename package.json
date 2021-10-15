@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "ts-node src/app.ts",
     "migrate": "ts-node src/scripts/migrate.ts",
+    "env": "ts-node src/scripts/environments.ts",
     "dev": "nodemon --watch './src/**/**/**/*.ts' --ignore './src/**/**/**/*.spec.ts' --ignore './node_modules/**/**/**/*' --exec ts-node ./src/app.ts"
   },
   "author": "Abolfazl Alizadeh",
