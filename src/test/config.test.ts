@@ -1,7 +1,8 @@
-import { sequelize } from '../config/database'
+import {sequelize} from '../config/database'
 
 beforeAll(async () => {
-    return await sequelize.authenticate()
+  return await sequelize.authenticate()
 })
 
-test('start', () => {})
+test('start', () => {
+})

@@ -1,10 +1,17 @@
-import { Model } from 'sequelize-typescript'
+import {Model} from 'sequelize-typescript'
 
+/**
+ * Helper for crud classes
+ */
 export default class Crud<T extends Model> {
-    protected static modelName = 'Unknown'
-    protected model: T
+  protected static modelName = 'Unknown'
+  protected model: T
 
-    public constructor(model: T) {
-        this.model = model
-    }
+  /**
+   * Create new instance from crud for use dynamic methods
+   * @param {T extends Model} model
+   */
+  public constructor(model: T) {
+    this.model = model
+  }
 }

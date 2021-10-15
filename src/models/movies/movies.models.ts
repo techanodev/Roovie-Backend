@@ -1,13 +1,13 @@
 import {
-    AllowNull,
-    BelongsTo,
-    Column,
-    Default,
-    ForeignKey,
-    HasMany,
-    Model,
-    NotEmpty,
-    Table,
+  AllowNull,
+  BelongsTo,
+  Column,
+  Default,
+  ForeignKey,
+  HasMany,
+  Model,
+  NotEmpty,
+  Table,
 } from 'sequelize-typescript'
 import User from '../users/users.models'
 import MovieFile from './movie_data/movie_files.models'
@@ -26,13 +26,16 @@ export interface MovieI {
 }
 
 @Table({
-    tableName: 'movies',
-    timestamps: true,
-    paranoid: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-    deletedAt: 'deleted_at',
+  tableName: 'movies',
+  timestamps: true,
+  paranoid: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+  deletedAt: 'deleted_at',
 })
+/**
+ * Movie class
+ */
 export default class Movie extends Model<Movie> implements MovieI {
     @AllowNull(false)
     @NotEmpty
@@ -42,12 +45,12 @@ export default class Movie extends Model<Movie> implements MovieI {
     @AllowNull(false)
     @NotEmpty
     @ForeignKey(() => User)
-    @Column({ field: 'name_english' })
+    @Column({field: 'name_english'})
     nameEnglish!: string
 
     @AllowNull(false)
     @NotEmpty
-    @Column({ field: 'user_id' })
+    @Column({field: 'user_id'})
     userId!: number
 
     @AllowNull(false)
@@ -57,13 +60,13 @@ export default class Movie extends Model<Movie> implements MovieI {
 
     @AllowNull(false)
     @NotEmpty
-    @Column({ field: 'is_public' })
+    @Column({field: 'is_public'})
     isPublic!: boolean
 
     @AllowNull(false)
     @NotEmpty
     @ForeignKey(() => Series)
-    @Column({ field: 'series_id' })
+    @Column({field: 'series_id'})
     seriesId!: number
 
     @AllowNull(true)

@@ -1,15 +1,15 @@
 import {
-    AllowNull,
-    BelongsTo,
-    Column,
-    ForeignKey,
-    Model,
-    NotNull,
-    Table,
+  AllowNull,
+  BelongsTo,
+  Column,
+  ForeignKey,
+  Model,
+  NotNull,
+  Table,
 } from 'sequelize-typescript'
 import HttpError from '../../../errors/http.errors'
 import Movie from '../movies.models'
-import MovieDataKey, { MovieDataKeyTypes } from './movie_data_key.models'
+import MovieDataKey, {MovieDataKeyTypes} from './movie_data_key.models'
 
 export interface MovieFileI {
     id?: number
@@ -19,13 +19,16 @@ export interface MovieFileI {
 }
 
 @Table({
-    tableName: 'movie_files',
+  tableName: 'movie_files',
 })
+/**
+ * Movie files
+ */
 export default class MovieFile extends Model<MovieFile> implements MovieFileI {
     @AllowNull(false)
     @NotNull
     @ForeignKey(() => Movie)
-    @Column({ field: 'movie_id' })
+    @Column({field: 'movie_id'})
     movieId!: number
 
     @AllowNull(false)
@@ -36,7 +39,7 @@ export default class MovieFile extends Model<MovieFile> implements MovieFileI {
     @AllowNull(false)
     @NotNull
     @ForeignKey(() => MovieDataKey)
-    @Column({ field: 'type_id' })
+    @Column({field: 'type_id'})
     typeId!: number
 
     @BelongsTo(() => Movie)
@@ -45,17 +48,21 @@ export default class MovieFile extends Model<MovieFile> implements MovieFileI {
     @BelongsTo(() => MovieDataKey)
     type?: MovieDataKey
 
+    /**
+     * @return {Promise<MovieFile>}
+     */
     async save() {
-        if (!this.type) {
-            const type = await MovieDataKey.findByPk(this.type)
+      if (!this.type) {
+        const type = await MovieDataKey.findByPk(this.type)
 
-            if (!type) throw HttpError.message.model.notFound('نوع فایل')
+        if (!type) throw HttpError.message.model.notFound('نوع فایل')
 
-            if (type.type == MovieDataKeyTypes.File)
-                throw HttpError.__(401, 'MOVIE_FILE_TYPE_NOT_VALID', {})
-
-            this.type = type
+        if (type.type == MovieDataKeyTypes.File) {
+          throw HttpError.__(401, 'MOVIE_FILE_TYPE_NOT_VALID', {})
         }
-        return await super.save()
+
+        this.type = type
+      }
+      return await super.save()
     }
 }
