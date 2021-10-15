@@ -6,6 +6,7 @@ import Crud from '../crud'
 import i18n = require('i18n')
 import '../../services/date.services'
 import TokenService from '../../services/token.services'
+import crypto = require('crypto')
 
 export type AuthResult = { token: string; user: User }
 
@@ -25,6 +26,11 @@ export default class UserCrud extends Crud<User> {
             true,
             true
         )
+
+        if (this.model.password) {
+            this.model.password = UserCrud.hashPassword(this.model.password)
+        }
+
         this.model = await this.model.saveUser()
         return {
             token: TokenService.createToken(this.model.id as number),
@@ -132,5 +138,18 @@ export default class UserCrud extends Crud<User> {
     public static usernameExists = async (username: string) => {
         const user = await User.findOne({ where: { username: username } })
         return user != null
+    }
+
+    private static hashPassword(password: string): string {
+        const hashingSecret = process.env.PASSWORD_HASH_SECRET_KEY
+
+        if (!hashingSecret)
+            throw new HttpError('Environment file .env doesn\'t have password hash secret key', 500)
+
+        const hashedStr = crypto.createHmac('sha256', hashingSecret)
+            .update(password)
+            .digest('hex')
+
+        return hashedStr
     }
 }

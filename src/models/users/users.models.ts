@@ -46,6 +46,10 @@ export default class User extends Model<User> {
     @Column
     username!: string
 
+    @AllowNull(true)
+    @Column
+    password?: string
+
     @AllowNull(false)
     @NotEmpty
     @Column({ field: 'first_name' })
