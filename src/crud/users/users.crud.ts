@@ -1,7 +1,8 @@
 import HttpError from '../../errors/http.errors'
 import User, {PhoneNumber} from '../../models/users/users.models'
-import ValidationCode,
-{ValidationCodeTypes} from '../../models/users/validation.code.models'
+import ValidationCode, {
+  ValidationCodeTypes,
+} from '../../models/users/validation.code.models'
 import SmsService from '../../services/sms.services'
 import Crud from '../crud'
 import i18n = require('i18n')
@@ -23,7 +24,8 @@ export default class UserCrud extends Crud<User> {
    * @return {Promise<AuthResult>} instance of the account created {@link User}
    */
   public async createAccount(code: string): Promise<AuthResult> {
-    await UserCrud.checkValidationCode(this.model.phoneNumber,
+    await UserCrud.checkValidationCode(
+        this.model.phoneNumber,
         'create_account',
         code,
         true,
@@ -40,37 +42,39 @@ export default class UserCrud extends Crud<User> {
    * Send a validation code to user for login
    * @param {PhoneNumber} phone
    */
-  public static sendLoginValidationCode =
-    async (phone: PhoneNumber): Promise<string> => {
-      const user = await User.findOne({
-        where: {
-          _phoneNumber: phone.number,
-          countryCode: phone.countryCode ?? 98,
-        },
-      })
-      if (!user) {
-        throw new HttpError(i18n.__('REGISTER_LOGIN_PHONE_NOT_FOUND'), 401)
-      }
-      return await UserCrud.sendValidationCode(phone, 'login')
+  public static sendLoginValidationCode = async (
+      phone: PhoneNumber,
+  ): Promise<string> => {
+    const user = await User.findOne({
+      where: {
+        _phoneNumber: phone.number,
+        countryCode: phone.countryCode ?? 98,
+      },
+    })
+    if (!user) {
+      throw new HttpError(i18n.__('REGISTER_LOGIN_PHONE_NOT_FOUND'), 401)
     }
+    return await UserCrud.sendValidationCode(phone, 'login')
+  }
 
   /**
    * send validation code for create account
    * @param {PhoneNumber} phone
    */
-  public static sendCreateAccountValidationCode =
-    async (phone: PhoneNumber): Promise<string> => {
-      const user = await User.findOne({
-        where: {
-          _phoneNumber: phone.number,
-          countryCode: phone.countryCode ?? 98,
-        },
-      })
-      if (user) {
-        throw HttpError.__(401, 'REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER', {})
-      }
-      return await UserCrud.sendValidationCode(phone, 'login')
+  public static sendCreateAccountValidationCode = async (
+      phone: PhoneNumber,
+  ): Promise<string> => {
+    const user = await User.findOne({
+      where: {
+        _phoneNumber: phone.number,
+        countryCode: phone.countryCode ?? 98,
+      },
+    })
+    if (user) {
+      throw HttpError.__(401, 'REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER', {})
     }
+    return await UserCrud.sendValidationCode(phone, 'login')
+  }
 
   /**
    * Login user to account and return a user token
@@ -78,23 +82,25 @@ export default class UserCrud extends Crud<User> {
    * @param {string} code Check validation code
    * @return {Promise<AuthResult>}
    */
-  public static login =
-    async (phone: PhoneNumber, code: string): Promise<AuthResult> => {
-      await UserCrud.checkValidationCode(phone, 'login', code, true, true)
-      const user = await User.findOne({
-        where: {
-          _phoneNumber: phone.number,
-          countryCode: phone.countryCode ?? '98',
-        },
-      })
-      if (!user || !user.id) {
-        throw HttpError.message.model.notFound(this.modelName)
-      }
-      return {
-        user: user,
-        token: TokenService.createToken(user.id),
-      }
+  public static async login(
+      phone: PhoneNumber,
+      code: string,
+  ): Promise<AuthResult> {
+    await UserCrud.checkValidationCode(phone, 'login', code, true, true)
+    const user = await User.findOne({
+      where: {
+        _phoneNumber: phone.number,
+        countryCode: phone.countryCode ?? '98',
+      },
+    })
+    if (!user || !user.id) {
+      throw HttpError.message.model.notFound(this.modelName)
     }
+    return {
+      user: user,
+      token: TokenService.createToken(user.id),
+    }
+  }
 
   /**
    *
@@ -151,20 +157,26 @@ export default class UserCrud extends Crud<User> {
    * @param {ValidationCodeTypes} type
    * type of validation code you want sent
    */
-  public static sendValidationCode =
-    async (phone: PhoneNumber, type: ValidationCodeTypes) => {
-      const validation = new ValidationCode()
-      validation.phoneNumber = phone
-      validation.type = type
-      validation.setRandomNumber()
-      await validation.save()
-      if (process.env.NODE_EN == 'dev') return validation.code
-      await SmsService.sendTemplate(phone, 'SMS_VALIDATION_CODE_SIGNUP', {
-        code: validation.code,
-      })
-      return validation.code
-    }
+  public static sendValidationCode = async (
+      phone: PhoneNumber,
+      type: ValidationCodeTypes,
+  ) => {
+    const validation = new ValidationCode()
+    validation.phoneNumber = phone
+    validation.type = type
+    validation.setRandomNumber()
+    await validation.save()
+    if (process.env.NODE_EN == 'dev') return validation.code
+    await SmsService.sendTemplate(phone, 'SMS_VALIDATION_CODE_SIGNUP', {
+      code: validation.code,
+    })
+    return validation.code
+  }
 
+  /**
+   * @param {string} username
+   * @return {boolean}
+   */
   public static usernameExists = async (username: string) => {
     const user = await User.findOne({where: {username: username}})
     return user != null

@@ -1,13 +1,13 @@
-import {Request, Response} from 'express'
-import {validationResult} from 'express-validator'
-import {Model} from 'sequelize-typescript'
+import { Request, Response } from 'express'
+import { validationResult } from 'express-validator'
+import { Model } from 'sequelize-typescript'
 import Resource from '../resources/resources'
 import RequestService from '../services/request.services'
 import ResponseService from '../services/response.services'
 
 export type CollectionType = <T extends Model>(
   models: T[] | null | undefined,
-  options?: { fileFields: string[] } | undefined,
+  options?: { fileFields: string[] } | undefined
 ) => ResponseType[]
 
 type ModelType<T> = T[] | { rows: T[]; count: number }
@@ -47,7 +47,7 @@ export default class Controller {
     field: string,
     models: ModelType<T> | Promise<ModelType<T>>,
     formatter?: any,
-    req?: Request,
+    req?: Request
   ) => {
     if (models instanceof Promise) {
       models.handleCatch(res).then((models) => {
@@ -68,8 +68,10 @@ export default class Controller {
 
       if (req) {
         const pagination = RequestService.pagination(req)
-        const pages = Number.parseInt((models.count / pagination.countPerPage)
-            .toString()) + 1
+        let pages = Number.parseInt(
+            (models.count / pagination.countPerPage).toString()
+        )
+        pages++
         response.set('pages', pages)
         response.set('page', pagination.page)
       }

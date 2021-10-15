@@ -14,6 +14,7 @@
 	"REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER": "شماره تلفن وارد شده قبلا توسط فرد دیگری استفاده شده است.",
 	"REGISTER_REQUEST_VALIDATION_CODE": "کد تایید ارسال شده به تلفن همراه خود را وارد نمایید.",
 	"REGISTER_LOGIN_PHONE_NOT_FOUND": "کاربری با این شماره تلفن یافت نشد.",
+	"REGISTER_LOGIN_NO_VALIDATION_CODE": "کد تایید را وارد نمایید.",
 	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{app_name}} خوش آمدید\nکد تایید شما: {{code}}",
 	"VALIDATION_CODE_SIGNUP": "VALIDATION_CODE_SIGNUP",
 	"REGISTER_REQUEST_NO_FIRSTNAME": "REGISTER_REQUEST_NO_FIRSTNAME",

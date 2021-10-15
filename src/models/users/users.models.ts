@@ -86,7 +86,9 @@ export default class User extends Model<User> {
    */
   get gender(): Gender | undefined {
     return this._gender ?
-      (this._gender ? Gender.Male : Gender.Female) :
+      this._gender ?
+        Gender.Male :
+        Gender.Female :
       undefined
   }
 
