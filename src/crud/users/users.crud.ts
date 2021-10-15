@@ -1,3 +1,5 @@
+import { WhereOptions } from 'sequelize'
+
 import HttpError from '../../errors/http.errors'
 import User, { PhoneNumber } from '../../models/users/users.models'
 import ValidationCode, { ValidationCodeTypes } from '../../models/users/validation.code.models'
@@ -64,11 +66,28 @@ export default class UserCrud extends Crud<User> {
      * @param code Check validation code
      * @returns instance of user
      */
-    public static async login(phone: PhoneNumber, code: string): Promise<AuthResult> {
-        await UserCrud.checkValidationCode(phone, 'login', code, true, true)
+    public static async login(
+        phone: PhoneNumber,
+        code?: string,
+        password?: string
+    ): Promise<AuthResult> {
+        const condition: WhereOptions<User> = {
+            _phoneNumber: phone.number,
+            countryCode: phone.countryCode ?? '98',
+        }
+
+        if (code) {
+            await UserCrud.checkValidationCode(phone, 'login', code, true, true)
+        } else if (password) {
+            condition.password = password
+        } else {
+            throw HttpError.__(400, 'REGISTER_LOGIN_NO_VALIDATION_CODE', {})
+        }
+
         const user = await User.findOne({
-            where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? '98' },
+            where: condition,
         })
+
         if (!user || !user.id) {
             throw HttpError.message.model.notFound(this.modelName)
         }
@@ -144,11 +163,9 @@ export default class UserCrud extends Crud<User> {
         const hashingSecret = process.env.PASSWORD_HASH_SECRET_KEY
 
         if (!hashingSecret)
-            throw new HttpError('Environment file .env doesn\'t have password hash secret key', 500)
+            throw new HttpError("Environment file .env doesn't have password hash secret key", 500)
 
-        const hashedStr = crypto.createHmac('sha256', hashingSecret)
-            .update(password)
-            .digest('hex')
+        const hashedStr = crypto.createHmac('sha256', hashingSecret).update(password).digest('hex')
 
         return hashedStr
     }
