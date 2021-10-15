@@ -7,10 +7,9 @@ import i18n = require('i18n')
 import '../../services/date.services'
 import TokenService from '../../services/token.services'
 
-export type AuthResult = { token: string, user: User }
+export type AuthResult = { token: string; user: User }
 
 export default class UserCrud extends Crud<User> {
-
     static modelName = 'کاربر'
 
     /**
@@ -29,25 +28,27 @@ export default class UserCrud extends Crud<User> {
         this.model = await this.model.saveUser()
         return {
             token: TokenService.createToken(this.model.id as number),
-            user: this.model
+            user: this.model,
         }
     }
 
     /**
-     * Send a validation code to user for login 
+     * Send a validation code to user for login
      * @param phone the phone number that want to receive login validation code
      */
     public static async sendLoginValidationCode(phone: PhoneNumber): Promise<string> {
-        const user = await User.findOne({ where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? 98 } })
-        if (!user)
-            throw new HttpError(i18n.__('REGISTER_LOGIN_PHONE_NOT_FOUND'), 401)
+        const user = await User.findOne({
+            where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? 98 },
+        })
+        if (!user) throw new HttpError(i18n.__('REGISTER_LOGIN_PHONE_NOT_FOUND'), 401)
         return await UserCrud.sendValidationCode(phone, 'login')
     }
 
     public static async sendCreateAccountValidationCode(phone: PhoneNumber): Promise<string> {
-        const user = await User.findOne({ where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? 98 } })
-        if (user)
-            throw new HttpError(i18n.__('REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER'), 401)
+        const user = await User.findOne({
+            where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? 98 },
+        })
+        if (user) throw new HttpError(i18n.__('REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER'), 401)
         return await UserCrud.sendValidationCode(phone, 'login')
     }
 
@@ -59,13 +60,15 @@ export default class UserCrud extends Crud<User> {
      */
     public static async login(phone: PhoneNumber, code: string): Promise<AuthResult> {
         await UserCrud.checkValidationCode(phone, 'login', code, true, true)
-        const user = await User.findOne({ where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? '98' } })
+        const user = await User.findOne({
+            where: { _phoneNumber: phone.number, countryCode: phone.countryCode ?? '98' },
+        })
         if (!user || !user.id) {
             throw HttpError.message.model.notFound(this.modelName)
         }
         return {
             user: user,
-            token: TokenService.createToken(user.id)
+            token: TokenService.createToken(user.id),
         }
     }
 
@@ -119,6 +122,7 @@ export default class UserCrud extends Crud<User> {
         validation.type = type
         validation.setRandomNumber()
         await validation.save()
+        if (process.env.NODE_EN == 'dev') return validation.code
         await SmsService.sendTemplate(phone, 'SMS_VALIDATION_CODE_SIGNUP', {
             code: validation.code,
         })
