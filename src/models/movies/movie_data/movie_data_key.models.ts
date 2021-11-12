@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   AllowNull,
   Column,
@@ -7,6 +8,7 @@ import {
   NotNull,
   Table,
 } from 'sequelize-typescript'
+
 
 export enum MovieDataKeyTypes {
   Meta = 0,
@@ -60,4 +62,25 @@ export default class MovieDataKey extends Model<MovieDataKey>
   @AllowNull(true)
   @Column({field: 'data_type', type: DataType.NUMBER})
   dataType?: MovieDataKeyDataTypes
+
+  /**
+   * List of valid types in server
+   * @return {{}}
+   */
+  static types = (): {[key: string]: MovieDataKeyI} => {
+    return {
+      movie: {
+        'title': 'فیلم',
+        'titleEnglish': 'Movie',
+        'type': MovieDataKeyTypes.File,
+        'dataType': MovieDataKeyDataTypes.String,
+      },
+      subtitle: {
+        title: 'زیرنویس',
+        titleEnglish: 'Subtitle',
+        type: MovieDataKeyTypes.File,
+        dataType: MovieDataKeyDataTypes.String,
+      },
+    }
+  }
 }

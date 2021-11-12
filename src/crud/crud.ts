@@ -9,7 +9,7 @@ export default class Crud<T extends Model> {
 
   /**
    * Create new instance from crud for use dynamic methods
-   * @param {T extends Model} model
+   * @param {T} model
    */
   public constructor(model: T) {
     this.model = model

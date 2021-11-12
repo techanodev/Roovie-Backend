@@ -12,10 +12,10 @@ import Movie from '../movies.models'
 import MovieDataKey, {MovieDataKeyTypes} from './movie_data_key.models'
 
 export interface MovieFileI {
-    id?: number
-    movieId: number
-    path: string
-    typeId: number
+  id?: number
+  movieId: number
+  path: string
+  typeId: number
 }
 
 @Table({
@@ -25,44 +25,44 @@ export interface MovieFileI {
  * Movie files
  */
 export default class MovieFile extends Model<MovieFile> implements MovieFileI {
-    @AllowNull(false)
-    @NotNull
-    @ForeignKey(() => Movie)
-    @Column({field: 'movie_id'})
-    movieId!: number
+  @AllowNull(false)
+  @NotNull
+  @ForeignKey(() => Movie)
+  @Column({field: 'movie_id'})
+  movieId!: number
 
-    @AllowNull(false)
-    @NotNull
-    @Column
-    path!: string
+  @AllowNull(false)
+  @NotNull
+  @Column
+  path!: string
 
-    @AllowNull(false)
-    @NotNull
-    @ForeignKey(() => MovieDataKey)
-    @Column({field: 'type_id'})
-    typeId!: number
+  @AllowNull(false)
+  @NotNull
+  @ForeignKey(() => MovieDataKey)
+  @Column({field: 'type_id'})
+  typeId!: number
 
-    @BelongsTo(() => Movie)
-    movie?: Movie
+  @BelongsTo(() => Movie)
+  movie?: Movie
 
-    @BelongsTo(() => MovieDataKey)
-    type?: MovieDataKey
+  @BelongsTo(() => MovieDataKey)
+  type?: MovieDataKey
 
-    /**
-     * @return {Promise<MovieFile>}
-     */
-    async save() {
-      if (!this.type) {
-        const type = await MovieDataKey.findByPk(this.type)
+  /**
+   * @return {Promise<MovieFile>}
+   */
+  async save() {
+    if (!this.type) {
+      const type = await MovieDataKey.findByPk(this.type)
 
-        if (!type) throw HttpError.message.model.notFound('نوع فایل')
+      if (!type) throw HttpError.message.model.notFound('نوع فایل')
 
-        if (type.type == MovieDataKeyTypes.File) {
-          throw HttpError.__(401, 'MOVIE_FILE_TYPE_NOT_VALID', {})
-        }
-
-        this.type = type
+      if (type.type == MovieDataKeyTypes.File) {
+        throw HttpError.__(401, 'MOVIE_FILE_TYPE_NOT_VALID', {})
       }
-      return await super.save()
+
+      this.type = type
     }
+    return await super.save()
+  }
 }
