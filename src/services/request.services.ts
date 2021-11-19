@@ -112,11 +112,11 @@ export default class RequestService {
    */
   public async user(throwError: boolean = true): Promise<User | null> {
     try {
-      const token = this.req.headers.authorization
-      if (!token) {
+      const token = this.req.headers.authorization?.toString()
+      if (token == '' || !token?.toLowerCase().startsWith('bearer ')) {
         throw HttpError.message.auth.noToken()
       }
-      const user = await TokenService.checkToken(token)
+      const user = await TokenService.checkToken(token.split(' ')[1])
       return user
     } catch (e) {
       if (throwError) {
