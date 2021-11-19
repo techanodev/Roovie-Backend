@@ -15,7 +15,7 @@ export default class MoviesCrud extends Crud<Movie> {
     const movieFile = new MovieFile()
     movieFile.movieId = movie.id
     movieFile.path = url
-    // movieFile.typeId =
+    movieFile.type = 'movie'
     return await movieFile.save()
   }
 }
