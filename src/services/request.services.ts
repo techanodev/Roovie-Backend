@@ -1,11 +1,13 @@
 import {Request} from 'express'
 import {Model} from 'sequelize-typescript'
-import {PhoneNumber} from '../models/users/users.models'
+import User, {PhoneNumber} from '../models/users/users.models'
 import Pagination, {PaginationI} from '../types/pagination.types'
 import '../services/string.services'
 
 
 import ModelService from './model.services'
+import TokenService from './token.services'
+import HttpError from '../errors/http.errors'
 
 /**
  * Request Service
@@ -99,5 +101,28 @@ export default class RequestService {
     const countryCode = this.req.body?.country_code ?? '98'
     const phoneNumber = this.req.body.phone_number
     return {number: phoneNumber, countryCode: countryCode ?? '98'}
+  }
+
+  /**
+   * Get user from request
+   * this method return the user has sent request
+   * @param {boolean} throwError if this was true throw an error
+   * @return {Promise<User|null>}
+   * if request sent as anonymous this method return null
+   */
+  public async user(throwError: boolean = true): Promise<User | null> {
+    try {
+      const token = this.req.headers.authorization
+      if (!token) {
+        throw HttpError.message.auth.noToken()
+      }
+      const user = await TokenService.checkToken(token)
+      return user
+    } catch (e) {
+      if (throwError) {
+        throw e
+      }
+      return null
+    }
   }
 }

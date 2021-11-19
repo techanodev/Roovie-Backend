@@ -72,6 +72,7 @@ export default class HttpError extends Error {
     },
     auth: {
       user: () => new HttpError('لطفا توکن کاربری را بررسی نمایید', 403),
+      noToken: () => new HttpError('لطفا توکن کاربری را وارد نمایید', 403),
     },
     request: {
       notFound: () => new HttpError('درخواست مورد نظر یافت نشد.', 404),
