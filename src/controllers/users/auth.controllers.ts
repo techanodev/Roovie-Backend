@@ -94,7 +94,6 @@ export default class AuthController extends Controller {
   public static sendCreateAccountValidationCode =
     async (req: Request, res: Response) => {
       try {
-        AuthController.checkValidationResult(req)
         const phone = RequestService.phone(req)
         await UserCrud.sendCreateAccountValidationCode(phone)
         ResponseService

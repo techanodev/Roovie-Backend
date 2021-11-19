@@ -73,7 +73,7 @@ export default class UserCrud extends Crud<User> {
     if (user) {
       throw HttpError.__(401, 'REGISTER_REQUEST_DUPLICATE_PHONE_NUMBER', {})
     }
-    return await UserCrud.sendValidationCode(phone, 'login')
+    return await UserCrud.sendValidationCode(phone, 'create_account')
   }
 
   /**
