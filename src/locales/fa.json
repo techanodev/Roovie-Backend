@@ -18,5 +18,6 @@
 	"SMS_VALIDATION_CODE_SIGNUP": "به نرم افزار {{app_name}} خوش آمدید\nکد تایید شما: {{code}}",
 	"VALIDATION_CODE_SIGNUP": "VALIDATION_CODE_SIGNUP",
 	"REGISTER_REQUEST_NO_FIRSTNAME": "REGISTER_REQUEST_NO_FIRSTNAME",
-	"MOVIE_FILE_TYPE_NOT_VALID": "نوع داده وارد شده مربوط به فایل نیست."
+	"MOVIE_FILE_TYPE_NOT_VALID": "نوع داده وارد شده مربوط به فایل نیست.",
+	"MOVIE_REQUEST_NO_URL": "لطفا آدرس اینترنتی فیلم را وارد نمایید."
 }

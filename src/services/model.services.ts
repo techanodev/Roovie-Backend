@@ -1,6 +1,8 @@
 import {Model} from 'sequelize-typescript'
 import '../services/string.services'
 
+export type RequestValue = {[key: string]: any}
+
 /**
  * Model Service
  */
@@ -11,7 +13,8 @@ export default class ModelService {
    * @param {Model} model
    * @return {Model}
    */
-  public static fillModel<T extends Model>(data: any, model: T) {
+  public static fillModel
+  <T extends Model, R extends RequestValue>(data: R, model: T): T {
     const keys = Object.keys(data)
     for (const key of keys) {
       const modelKey = ModelService.checkModelColumnInRequest<T>(model, key)

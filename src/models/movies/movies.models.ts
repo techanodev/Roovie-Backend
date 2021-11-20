@@ -20,7 +20,7 @@ export interface MovieI {
     userId: number
     duration: number
     isPublic: boolean
-    seriesId: number
+    seriesId?: number
     episode?: number
     season?: number
 }
@@ -44,12 +44,12 @@ export default class Movie extends Model<Movie> implements MovieI {
 
     @AllowNull(false)
     @NotEmpty
-    @ForeignKey(() => User)
     @Column({field: 'name_english'})
     nameEnglish!: string
 
     @AllowNull(false)
     @NotEmpty
+    @ForeignKey(() => User)
     @Column({field: 'user_id'})
     userId!: number
 
@@ -63,11 +63,11 @@ export default class Movie extends Model<Movie> implements MovieI {
     @Column({field: 'is_public'})
     isPublic!: boolean
 
-    @AllowNull(false)
-    @NotEmpty
+    @AllowNull(true)
+    @Default(null)
     @ForeignKey(() => Series)
     @Column({field: 'series_id'})
-    seriesId!: number
+    seriesId?: number
 
     @AllowNull(true)
     @Default(1)
