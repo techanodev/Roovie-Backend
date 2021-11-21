@@ -10,8 +10,11 @@ import {
   Table,
 } from 'sequelize-typescript'
 import User from '../users/users.models'
+import {Includeable} from 'sequelize'
 import MovieFile from './movie_data/movie_files.models'
 import Series from './series.models'
+
+export type MovieIncludeOption = {movieFiles?: boolean, user?: boolean}
 
 export interface MovieI {
     id?: number
@@ -87,4 +90,20 @@ export default class Movie extends Model<Movie> implements MovieI {
 
     @HasMany(() => MovieFile)
     files?: MovieFile[]
+
+    /**
+     * include options for movie model
+     * @param {MovieIncludeOption} options
+     * @return {Includeable[]}
+     */
+    static include(options: MovieIncludeOption): Includeable[] {
+      const include: Includeable[] = []
+      if (options.user) {
+        include.push({model: User})
+      }
+      if (options.movieFiles) {
+        include.push({model: MovieFile})
+      }
+      return include
+    }
 }
