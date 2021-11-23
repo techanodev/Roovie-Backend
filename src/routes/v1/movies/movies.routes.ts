@@ -7,7 +7,10 @@ const routes = Router()
 
 routes.post('/create/url',
     body('url')
+        .isURL().withMessage(__('MOVIE_REQUEST_INVALID_URL'))
         .isString().withMessage(__('MOVIE_REQUEST_NO_URL')),
     MovieController.createMovieByUrl)
+
+routes.get('/my-movie', MovieController.getUserMovies)
 
 export default routes
