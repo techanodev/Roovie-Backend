@@ -64,24 +64,24 @@ export default class Room extends Model<Room> implements RoomI {
   description?: string
 
   @Column({field: 'start_time'})
-  startTime?: Date | undefined
+  startTime?: Date
 
   @Column({field: 'end_time'})
-  endTime?: Date | undefined
+  endTime?: Date
 
   @AllowNull(false)
   @Default(-1)
   @Column({field: 'max_users'})
-  maxUsers?: number | undefined
+  maxUsers?: number
 
   @AllowNull(false)
   @Column
-  password?: string | undefined
+  password?: string
 
   @AllowNull(false)
   @Default(false)
   @Column({field: 'is_public'})
-  isPublic?: boolean | undefined
+  isPublic?: boolean
 
   @BelongsTo(() => Movie)
   movie?: Movie

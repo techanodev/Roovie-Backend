@@ -62,7 +62,7 @@ test('Create account and Login', async () => {
   await user.destroy({force: true})
 })
 
-const fakeUser = (phone: PhoneNumber) => {
+export const fakeUser = (phone: PhoneNumber) => {
   const user = new User()
   user.firstName = faker.name.firstName(0)
   user.lastName = faker.name.lastName(0)
