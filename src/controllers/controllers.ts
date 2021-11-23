@@ -1,6 +1,6 @@
-import { Request, Response } from 'express'
-import { validationResult } from 'express-validator'
-import { Model } from 'sequelize-typescript'
+import {Request, Response} from 'express'
+import {validationResult} from 'express-validator'
+import {Model} from 'sequelize-typescript'
 import Resource from '../resources/resources'
 import RequestService from '../services/request.services'
 import ResponseService from '../services/response.services'
@@ -22,7 +22,7 @@ export default class Controller {
    * @param {Express.Request} req request for check result in request
    * @return {void}
    */
-  protected static checkValidationResult(req: Request) {
+  protected static checkValidationResult(req: Request): void {
     const error = validationResult(req)
     if (error.isEmpty()) return
     throw error
@@ -47,7 +47,7 @@ export default class Controller {
     field: string,
     models: ModelType<T> | Promise<ModelType<T>>,
     formatter?: any,
-    req?: Request
+    req?: Request,
   ) => {
     if (models instanceof Promise) {
       models.handleCatch(res).then((models) => {
@@ -69,7 +69,7 @@ export default class Controller {
       if (req) {
         const pagination = RequestService.pagination(req)
         let pages = Number.parseInt(
-            (models.count / pagination.countPerPage).toString()
+            (models.count / pagination.countPerPage).toString(),
         )
         pages++
         response.set('pages', pages)
