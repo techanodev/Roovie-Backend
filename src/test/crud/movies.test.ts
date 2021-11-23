@@ -18,6 +18,7 @@ afterAll(() => {
 test('Create movie by URL', async () => {
   const url = 'https://google.com'
   const user = fakeUser({number: faker.phone.phoneNumber('912#######')})
+  await user.save()
   const movie = new Movie()
   movie.name = 'نام فیلم'
   movie.nameEnglish = 'Movie name'
