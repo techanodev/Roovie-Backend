@@ -181,4 +181,22 @@ export default class UserCrud extends Crud<User> {
     const user = await User.findOne({where: {username: username}})
     return user != null
   }
+
+  /**
+   * Check list of users ids was exists in list
+   * @param {number[]} usersIds
+   * list of users ids
+   * @return {User[]}
+   */
+  public static checkListOfUsersExists = async (usersIds: number[]) => {
+    const users = await User.findAndCountAll({where: {id: usersIds}})
+    if (usersIds.length > users.count) {
+      const idsString =
+        users.rows.filter((x) => !usersIds.includes(x.id as number))
+            .map((x) => x.id as number).join(', ')
+      const msg = 'متاسفانه شناسه های ' + idsString + ' یافت نشد'
+      throw new HttpError(msg, 401)
+    }
+    return users.rows
+  }
 }
