@@ -1,4 +1,5 @@
 import HttpError from '../../errors/http.errors';
+import Movie from '../../models/movies/movies.models';
 import Room, {RoomI} from '../../models/rooms/rooms.models';
 import UserRoom from '../../models/rooms/user_rooms.models';
 import User from '../../models/users/users.models';
@@ -15,7 +16,13 @@ export default class RoomCrud extends Crud<Room> {
    * @return {Promise<Room>}
    */
   async createRoom(userId: number): Promise<Room> {
+    const movie = await Movie.findByPk(this.model.movieId)
+    // check movie id exists or not
+    if (!movie) {
+      throw HttpError.message.model.notFound('فیلم')
+    }
     const room = await this.model.save()
+
     const userRoom = new UserRoom()
     userRoom.userId = userId
     userRoom.roomId = room.id
@@ -123,5 +130,24 @@ export default class RoomCrud extends Crud<Room> {
     }
     const crud = new RoomCrud(room)
     await crud.deleteRoom()
+  }
+
+  /**
+   * Update a room by ID
+   * @param {number} id identify of a room
+   * @param {number} userId identify of a user
+   * @param {RoomI} data the data you want to update in room
+   * @return {Room} a instance of new updated room
+   */
+  static updateRoom =
+  async (id: number, userId: number, data: RoomI): Promise<Room> => {
+    const room = await Room
+        .findOne({where: {id: id}, include: Room.include({userId: userId})})
+
+    if (!room) {
+      throw HttpError.message.model.notFound('اتاق')
+    }
+    const crud = new RoomCrud()
+    return await crud.updateRoom(data)
   }
 }

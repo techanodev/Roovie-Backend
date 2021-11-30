@@ -23,7 +23,7 @@ export default class RoomController extends Controller {
       const userId = (await request.user())?.id as number
       const roomCrud = new RoomCrud(room)
       room = await roomCrud.createRoom(userId)
-      ResponseService.makeNew(res).model.success.create(await room.id, 'اتاق')
+      ResponseService.makeNew(res).model.success.create(room.id, 'اتاق')
     } catch (e) {
       ResponseService.handleError(res, e)
     }
@@ -40,6 +40,23 @@ export default class RoomController extends Controller {
       const userId = (await request.user())?.id as number
       const roomId = Number.parseInt(req.params.roomId)
       await RoomCrud.deleteRoom(roomId, userId)
+    } catch (e) {
+      ResponseService.handleError(res, e)
+    }
+  }
+
+  /**
+   * Update room
+   * @param {Request} req
+   * @param {Response} res
+   */
+  public static updateRoom = async (req: Request, res: Response) => {
+    try {
+      const request = RequestService.newInstance(req)
+      const userId = (await request.user())?.id as number
+      const roomId = Number.parseInt(req.params.roomId)
+      await RoomCrud.updateRoom(roomId, userId, req.body)
+      ResponseService.makeNew(res).model.success.update('اتاق')
     } catch (e) {
       ResponseService.handleError(res, e)
     }
