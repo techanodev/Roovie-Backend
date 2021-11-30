@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript'
 import {Includeable} from 'sequelize/types'
 import Movie from '../movies/movies.models'
+import User from '../users/users.models'
 import UserRoom from './user_rooms.models'
 
 export type RoomsIncludeOptions = {
@@ -21,7 +22,17 @@ export type RoomsIncludeOptions = {
   /**
    * If have a valid numeric value, movie model has included with defined id
    */
-  movieId?: number
+  movieId?: number,
+
+  /**
+   * If true, movie foreign key has included users in this room
+   */
+  user?: boolean,
+
+  /**
+   * If have a valid numeric value, the user included by Id
+   */
+  userId?: number
 }
 
 export interface RoomI {
@@ -104,6 +115,14 @@ export default class Room extends Model<Room> implements RoomI {
         include.where = {movieId: option.movieId}
       }
       includes.push(include)
+    }
+    if (option?.user || option?.userId) {
+      const include: Includeable = {
+        model: User,
+      }
+      if (option.userId) {
+        include.where = {id: option.userId}
+      }
     }
     return includes
   }

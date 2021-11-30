@@ -30,7 +30,7 @@ export default class RoomCrud extends Crud<Room> {
    */
   async forceDeleteRoom(): Promise<void> {
     await UserRoom.destroy({where: {id: this.model.id}})
-    return await this.model.destroy()
+    return await this.model.destroy({force: true})
   }
 
   /**
@@ -108,5 +108,20 @@ export default class RoomCrud extends Crud<Room> {
     userRoom.userId = user.id as number
 
     return userRoom.save()
+  }
+
+  /**
+   * Delete a room by ID
+   * @param {number} id identify number of room
+   * @param {number} userId id of user
+   */
+  static deleteRoom = async (id: number, userId: number) => {
+    const room = await Room
+        .findOne({where: {id: id}, include: Room.include({userId: userId})})
+    if (!room) {
+      throw HttpError.message.model.notFound('اتاق')
+    }
+    const crud = new RoomCrud(room)
+    await crud.deleteRoom()
   }
 }
