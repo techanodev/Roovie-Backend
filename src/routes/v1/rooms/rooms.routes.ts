@@ -16,3 +16,7 @@ routes.post('/',
 routes.delete('/:id', RoomController.deleteRoom)
 
 routes.put('/:id', RoomController.updateRoom)
+
+routes.get('/', RoomController.listRooms)
+
+routes.get('/:id', RoomController.detailRoom)

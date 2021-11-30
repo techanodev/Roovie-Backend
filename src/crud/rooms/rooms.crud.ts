@@ -150,4 +150,31 @@ export default class RoomCrud extends Crud<Room> {
     const crud = new RoomCrud()
     return await crud.updateRoom(data)
   }
+
+  /**
+   * Get details of a room by ID
+   * @param {number} id identify of room
+   * @return {Promise<Room>}
+   */
+  static detailRoom = async (id: number): Promise<Room> => {
+    const room = await Room.findOne({
+      where: {id: id, isPublic: true},
+      include: Room.include({movie: true}),
+    })
+    if (!room) {
+      throw HttpError.message.model.notFound(RoomCrud.modelName)
+    }
+    return room
+  }
+
+  /**
+   * get list of rooms
+   * @return {Promise<Room[]>}
+   */
+  static listRooms = async (): Promise<Room[]> => {
+    const rooms = await Room.findAll({
+      where: {isPublic: true},
+    })
+    return rooms
+  }
 }

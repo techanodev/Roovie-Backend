@@ -4,6 +4,7 @@ import ResponseService from '../../services/response.services';
 import RoomCrud from '../../crud/rooms/rooms.crud';
 import Room from '../../models/rooms/rooms.models';
 import RequestService from '../../services/request.services';
+import RoomResource from '../../resources/rooms/rooms.resources';
 
 /**
  * Controller for rooms
@@ -57,6 +58,39 @@ export default class RoomController extends Controller {
       const roomId = Number.parseInt(req.params.roomId)
       await RoomCrud.updateRoom(roomId, userId, req.body)
       ResponseService.makeNew(res).model.success.update('اتاق')
+    } catch (e) {
+      ResponseService.handleError(res, e)
+    }
+  }
+
+  /**
+   * list of rooms
+   * @param {Request} req
+   * @param {Response} res
+   */
+  public static listRooms = async (req: Request, res: Response) => {
+    try {
+      const rooms = await RoomCrud.listRooms()
+      RoomController.responseModels(res, 'rooms', rooms)
+    } catch (e) {
+      ResponseService.handleError(res, e)
+    }
+  }
+
+  /**
+   * Details of a room
+   * @param {Request} req
+   * @param {Response} res
+   */
+  public static detailRoom = async (req: Request, res: Response) => {
+    try {
+      const id = Number.parseInt(req.params.roomId)
+      const room = await RoomCrud.detailRoom(id)
+      const response = new ResponseService(res)
+      response.setStatus(true)
+      response.set('room', new RoomResource(room))
+      response.setStatusCode(200)
+      response.response()
     } catch (e) {
       ResponseService.handleError(res, e)
     }
