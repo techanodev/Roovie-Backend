@@ -199,4 +199,14 @@ export default class UserCrud extends Crud<User> {
     }
     return users.rows
   }
+
+
+  /**
+   * Update user profile photo from express multer request
+   * @param {Express.Multer.File} file file result from req.file value
+   */
+  public async uploadUserPhoto(file: Express.Multer.File) {
+    this.model.profilePhoto = file.path
+    await this.model.save()
+  }
 }

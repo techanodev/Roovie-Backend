@@ -10,9 +10,12 @@ import {
 } from 'sequelize-typescript'
 import {SaveOptions} from 'sequelize'
 import HttpError from '../../errors/http.errors'
+import * as fs from 'fs'
 
 export enum Gender {
+  // eslint-disable-next-line no-unused-vars
   Male = 1,
+  // eslint-disable-next-line no-unused-vars
   Female = 0,
 }
 
@@ -72,6 +75,10 @@ export default class User extends Model<User> {
   @Column
   birthday?: Date
 
+  @AllowNull(true)
+  @Column({field: 'photo'})
+  private _profilePhoto?: string
+
   /**
    * Set gender for user model
    * @param {Gender} gender
@@ -107,6 +114,23 @@ export default class User extends Model<User> {
    */
   get phoneNumber(): PhoneNumber {
     return {number: this._phoneNumber, countryCode: this.countryCode}
+  }
+
+  /**
+   * @return {string | undefined}
+   */
+  get profilePhoto(): string | undefined {
+    return this._profilePhoto
+  }
+
+  /**
+   * @param {string} profilePhoto
+   */
+  set profilePhoto(profilePhoto: string | undefined) {
+    if (profilePhoto && !fs.existsSync(profilePhoto)) {
+      throw new HttpError('متاسفانه فایل یافت نشد', 401)
+    }
+    this._profilePhoto = profilePhoto
   }
 
   /**
