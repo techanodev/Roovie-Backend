@@ -14,8 +14,9 @@ export default class FileService {
     const lastDir = require.main.filename.split('/')
     const resultPath = lastDir[lastDir.length - 1]
     const absolutePath =
-      `${path.dirname(require.main.filename.replace(resultPath, ''))}
-      /${filePath}`
+      `${
+        path.dirname(require.main.filename.replace(resultPath, ''))
+      }/${filePath}`
     FileService.makeFolder(absolutePath)
     return absolutePath
   }

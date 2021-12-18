@@ -8,6 +8,7 @@ import Crud from '../crud'
 import i18n = require('i18n')
 import '../../services/date.services'
 import TokenService from '../../services/token.services'
+import * as fs from 'fs'
 
 export type AuthResult = { token: string; user: User }
 
@@ -206,6 +207,10 @@ export default class UserCrud extends Crud<User> {
    * @param {Express.Multer.File} file file result from req.file value
    */
   public async uploadUserPhoto(file: Express.Multer.File) {
+    const profilePhoto = this.model.profilePhoto
+    if (profilePhoto && fs.existsSync(profilePhoto)) {
+      fs.rmSync(profilePhoto)
+    }
     this.model.profilePhoto = file.path
     await this.model.save()
   }

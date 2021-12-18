@@ -17,13 +17,16 @@ export default class UserController extends Controller {
   static uploadPhoto = async (req: Request, res: Response) => {
     try {
       const user = await(new RequestService(req)).user()
-      // const profile = req.file
       if (!user?.id) {
         throw HttpError.message.auth.user()
       }
+      if (!req.file) {
+        throw new HttpError('لطفا تصویری برای آپلود وارد نمایید.', 401)
+      }
       const userCrud = new UserCrud(user)
-      await userCrud.uploadUserPhoto(req.body.file)
-      ResponseService.makeNew(res).model.success.update('تصویر کاربر')
+      await userCrud.uploadUserPhoto(req.file)
+      ResponseService.makeNew(res).model.success
+          .update('تصویر کاربر').response()
     } catch (e) {
       ResponseService.handleError(res, e)
     }
