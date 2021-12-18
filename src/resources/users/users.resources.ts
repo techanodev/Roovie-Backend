@@ -20,6 +20,7 @@ export default class UserResource extends Resource<User> {
       birthday: this.model.birthday,
       gender: this.model.gender,
       phone_number: `+${phone.countryCode}${phone.number}`,
+      photo: UserResource.convertPath(this.model.profilePhoto ?? ''),
     }
   }
 }

@@ -1,6 +1,7 @@
 import {Response, Request} from 'express';
 import UserCrud from '../../crud/users/users.crud';
 import HttpError from '../../errors/http.errors';
+import UserResource from '../../resources/users/users.resources';
 import RequestService from '../../services/request.services';
 import ResponseService from '../../services/response.services';
 import Controller from '../controllers';
@@ -9,6 +10,26 @@ import Controller from '../controllers';
  * Controller for users
  */
 export default class UserController extends Controller {
+  /**
+   * Get user information
+   * @param {Request} req
+   * @param {Response} res
+   */
+  static profile = async (req: Request, res: Response) => {
+    try {
+      const user = await (new RequestService(req)).user()
+      if (!user?.id) {
+        throw HttpError.message.auth.user()
+      }
+      ResponseService
+          .newInstance(res)
+          .set('profile', new UserResource(user))
+          .response()
+    } catch (e) {
+      ResponseService.handleError(res, e)
+    }
+  }
+
   /**
    * Upload new photo for user
    * @param {Request} req

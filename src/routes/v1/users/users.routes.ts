@@ -16,4 +16,6 @@ routes.post(
     UserController.uploadPhoto,
 )
 
+routes.get('', UserController.profile)
+
 export default routes
