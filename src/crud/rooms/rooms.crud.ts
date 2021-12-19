@@ -5,6 +5,7 @@ import UserRoom from '../../models/rooms/user_rooms.models';
 import User from '../../models/users/users.models';
 import Crud from '../crud';
 import UserCrud from '../users/users.crud';
+import {WhereOptions} from 'sequelize'
 
 /**
  * Create, read, update and delete methods for room
@@ -169,11 +170,18 @@ export default class RoomCrud extends Crud<Room> {
 
   /**
    * get list of rooms
+   * @param {number} userId
    * @return {Promise<Room[]>}
    */
-  static listRooms = async (): Promise<Room[]> => {
+  static listRooms = async (userId?: number): Promise<Room[]> => {
+    const whereOptions: WhereOptions<Room> = {
+      isPublic: true,
+    }
+    if (userId) {
+      // whereOptions.cre
+    }
     const rooms = await Room.findAll({
-      where: {isPublic: true},
+      where: whereOptions,
     })
     return rooms
   }

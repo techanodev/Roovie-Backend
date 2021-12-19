@@ -24,7 +24,11 @@ export default class RoomController extends Controller {
       const userId = (await request.user())?.id as number
       const roomCrud = new RoomCrud(room)
       room = await roomCrud.createRoom(userId)
-      ResponseService.makeNew(res).model.success.create(room.id, 'اتاق')
+      ResponseService
+          .makeNew(res)
+          .model.success
+          .create(room.id, 'اتاق')
+          .response()
     } catch (e) {
       ResponseService.handleError(res, e)
     }
@@ -65,10 +69,10 @@ export default class RoomController extends Controller {
 
   /**
    * list of rooms
-   * @param {Request} req
+   * @param {Request} _req
    * @param {Response} res
    */
-  public static listRooms = async (req: Request, res: Response) => {
+  public static listRooms = async (_req: Request, res: Response) => {
     try {
       const rooms = await RoomCrud.listRooms()
       RoomController.responseModels(res, 'rooms', rooms)

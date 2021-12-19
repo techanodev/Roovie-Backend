@@ -69,7 +69,8 @@ export default class ResponseService {
       response
           .setMessage('متاسفانه در اتصال به بانک اطلاعاتی خطایی روی داده است.')
     } else if (error instanceof sequelize.ValidationError) {
-      response.setMessage(error.errors[0].message)
+      response
+          .setMessage(error.errors[0]?.message ?? 'خطای نامشخص برای دیتابیس')
       response.setStatusCode(400)
     } else if (error instanceof sequelize.UniqueConstraintError) {
       response.setMessage(error.sql)

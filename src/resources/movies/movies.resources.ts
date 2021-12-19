@@ -12,6 +12,7 @@ export default class MoviesResource extends Resource<Movie> {
    */
   toArray(isCollection?: boolean): { [key: string]: any; } {
     const data: {[key: string]: any} = {
+      'id': this.model.id,
       'title': this.model.name,
       'title_lang': {
         'fa': this.model.name,

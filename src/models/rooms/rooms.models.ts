@@ -85,7 +85,7 @@ export default class Room extends Model<Room> implements RoomI {
   @Column({field: 'max_users'})
   maxUsers?: number
 
-  @AllowNull(false)
+  @AllowNull(true)
   @Column
   password?: string
 

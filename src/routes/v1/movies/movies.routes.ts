@@ -11,6 +11,6 @@ routes.post('/create/url',
         .isString().withMessage(__('MOVIE_REQUEST_NO_URL')),
     MovieController.createMovieByUrl)
 
-routes.get('/my-movie', MovieController.getUserMovies)
+routes.get('/my-movies', MovieController.getUserMovies)
 
 export default routes
