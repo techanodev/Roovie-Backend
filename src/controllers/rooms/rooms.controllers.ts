@@ -103,8 +103,9 @@ export default class RoomController extends Controller {
    */
   public static detailRoom = async (req: Request, res: Response) => {
     try {
+      const userId = (await (new RequestService(req)).user())?.id
       const id = Number.parseInt(req.params.roomId)
-      const room = await RoomCrud.detailRoom(id)
+      const room = await RoomCrud.detailRoom(id, userId)
       const response = new ResponseService(res)
       response.setStatus(true)
       response.set('room', new RoomResource(room))

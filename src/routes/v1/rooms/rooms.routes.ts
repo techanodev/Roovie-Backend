@@ -21,6 +21,6 @@ routes.get('/', RoomController.listRooms)
 
 routes.get('/my-rooms', RoomController.userRooms)
 
-routes.get('/:id', RoomController.detailRoom)
+routes.get('/:roomId', RoomController.detailRoom)
 
 export default routes

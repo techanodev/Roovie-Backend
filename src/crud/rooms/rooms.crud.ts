@@ -7,11 +7,15 @@ import Crud from '../crud';
 import UserCrud from '../users/users.crud';
 import { WhereOptions } from 'sequelize'
 import Pagination from '../../types/pagination.types';
+import RequestService from '../../services/request.services';
 
 /**
  * Create, read, update and delete methods for room
  */
 export default class RoomCrud extends Crud<Room> {
+
+  static modelName = "اتاق";
+
   /**
    * Create new room for a user
    * @param {number} userId
@@ -158,14 +162,24 @@ export default class RoomCrud extends Crud<Room> {
    * @param {number} id identify of room
    * @return {Promise<Room>}
    */
-  static detailRoom = async (id: number): Promise<Room> => {
+  static detailRoom = async (id: number, userId?: number): Promise<Room> => {
     const room = await Room.findOne({
-      where: { id: id, isPublic: true },
+      where: { id: id },
       include: Room.include({ movie: true, user: true }),
     })
-    if (!room) {
+
+    if (!room || !room.id || !(room.isPublic || userId)) {
       throw HttpError.message.model.notFound(RoomCrud.modelName)
     }
+
+
+    if (!room?.isPublic) {
+      const hasAccess = await UserRoom.findOne({ where: { roomId: room.id, userId: userId } })
+      if (!hasAccess) {
+        throw HttpError.message.model.notFound(RoomCrud.modelName)
+      }
+    }
+
     return room
   }
 

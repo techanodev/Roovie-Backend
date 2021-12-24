@@ -13,6 +13,7 @@ export default class RoomResource extends Resource<Room> {
    */
   toArray(): ResourceType {
     const result: ResourceType = {
+      'id': this.model.id,
       'title': this.model.title,
       'description': this.model.description,
       'schedule': {
