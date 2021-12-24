@@ -1,11 +1,12 @@
 import HttpError from '../../errors/http.errors';
 import Movie from '../../models/movies/movies.models';
-import Room, {RoomI} from '../../models/rooms/rooms.models';
+import Room, { RoomI } from '../../models/rooms/rooms.models';
 import UserRoom from '../../models/rooms/user_rooms.models';
 import User from '../../models/users/users.models';
 import Crud from '../crud';
 import UserCrud from '../users/users.crud';
-import {WhereOptions} from 'sequelize'
+import { WhereOptions } from 'sequelize'
+import Pagination from '../../types/pagination.types';
 
 /**
  * Create, read, update and delete methods for room
@@ -37,8 +38,8 @@ export default class RoomCrud extends Crud<Room> {
    * this methods has delete all UserRoom models in room
    */
   async forceDeleteRoom(): Promise<void> {
-    await UserRoom.destroy({where: {id: this.model.id}})
-    return await this.model.destroy({force: true})
+    await UserRoom.destroy({ where: { id: this.model.id } })
+    return await this.model.destroy({ force: true })
   }
 
   /**
@@ -85,7 +86,7 @@ export default class RoomCrud extends Crud<Room> {
     if (!user) {
       throw HttpError.message.model.notFound('کاربر')
     }
-    const result = await UserRoom.destroy({where: {userId: userId}})
+    const result = await UserRoom.destroy({ where: { userId: userId } })
     if (!result) {
       throw HttpError.message.model.notFound('کاربر در اتاق')
     }
@@ -125,7 +126,7 @@ export default class RoomCrud extends Crud<Room> {
    */
   static deleteRoom = async (id: number, userId: number) => {
     const room = await Room
-        .findOne({where: {id: id}, include: Room.include({userId: userId})})
+      .findOne({ where: { id: id }, include: Room.include({ userId: userId }) })
     if (!room) {
       throw HttpError.message.model.notFound('اتاق')
     }
@@ -141,16 +142,16 @@ export default class RoomCrud extends Crud<Room> {
    * @return {Room} a instance of new updated room
    */
   static updateRoom =
-  async (id: number, userId: number, data: RoomI): Promise<Room> => {
-    const room = await Room
-        .findOne({where: {id: id}, include: Room.include({userId: userId})})
+    async (id: number, userId: number, data: RoomI): Promise<Room> => {
+      const room = await Room
+        .findOne({ where: { id: id }, include: Room.include({ userId: userId }) })
 
-    if (!room) {
-      throw HttpError.message.model.notFound('اتاق')
+      if (!room) {
+        throw HttpError.message.model.notFound('اتاق')
+      }
+      const crud = new RoomCrud()
+      return await crud.updateRoom(data)
     }
-    const crud = new RoomCrud()
-    return await crud.updateRoom(data)
-  }
 
   /**
    * Get details of a room by ID
@@ -159,8 +160,8 @@ export default class RoomCrud extends Crud<Room> {
    */
   static detailRoom = async (id: number): Promise<Room> => {
     const room = await Room.findOne({
-      where: {id: id, isPublic: true},
-      include: Room.include({movie: true}),
+      where: { id: id, isPublic: true },
+      include: Room.include({ movie: true, user: true }),
     })
     if (!room) {
       throw HttpError.message.model.notFound(RoomCrud.modelName)
@@ -170,19 +171,32 @@ export default class RoomCrud extends Crud<Room> {
 
   /**
    * get list of rooms
-   * @param {number} userId
+   * @param {number} _userId
    * @return {Promise<Room[]>}
    */
-  static listRooms = async (userId?: number): Promise<Room[]> => {
-    const whereOptions: WhereOptions<Room> = {
-      isPublic: true,
-    }
-    if (userId) {
-      // whereOptions.cre
-    }
-    const rooms = await Room.findAll({
-      where: whereOptions,
+  static listRooms = async (_userId?: number, pagination?: Pagination): Promise<Room[]> => {
+    return await Room.findAll({
+      include: Room.include({ movie: true, user: true }),
+      offset: pagination?.skip,
+      limit: pagination?.countPerPage
     })
-    return rooms
+  }
+
+  /**
+   * Get list of user rooms
+   * @param {number} userId the user you want to get his rooms
+   * @param {Pagination} pagination Pagination value for request
+   * @returns {Promise<Room[]>}
+   */
+  static userRooms = async (userId: number, pagination?: Pagination): Promise<Room[]> => {
+    const userRooms = UserRoom.findAll({
+      include: UserRoom.include({ roomIncludeOption: Room.include({ movie: true, user: true }) }),
+      offset: pagination?.skip,
+      limit: pagination?.countPerPage,
+      where: {
+        userId: userId
+      }
+    })
+    return (await userRooms).filter(x => x.room).map(x => x.room as Room)
   }
 }

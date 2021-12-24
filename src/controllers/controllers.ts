@@ -1,7 +1,7 @@
 import {Request, Response} from 'express'
 import {validationResult} from 'express-validator'
 import {Model} from 'sequelize-typescript'
-import Resource from '../resources/resources'
+import Resource, { ResourceType } from '../resources/resources'
 import RequestService from '../services/request.services'
 import ResponseService from '../services/response.services'
 
@@ -9,6 +9,9 @@ export type CollectionType = <T extends Model>(
   models: T[] | null | undefined,
   options?: { fileFields: string[] } | undefined
 ) => ResponseType[]
+
+type FormatterType<T extends Model> = (models: (T | undefined)[] | T[] | null | undefined,
+      options?: { fileFields: string[], moreFields: string[] }) => ResourceType[]
 
 type ModelType<T> = T[] | { rows: T[]; count: number }
 
@@ -35,7 +38,7 @@ export default class Controller {
    * name of field that models want to list
    * @param {Model} models
    * list of models instances
-   * @param {any|undefined} formatter
+   * @param {typeof Resource|undefined} formatter
    * formatter is type of resource class for models {@link Resource}
    * @param {Express.Request} req
    * if you set req value
@@ -48,7 +51,7 @@ export default class Controller {
     models: ModelType<T> | Promise<ModelType<T>>,
     formatter?: any,
     req?: Request,
-  ) => {
+  ): any => {
     if (models instanceof Promise) {
       models.handleCatch(res).then((models) => {
         Controller.responseModels(res, field, models, formatter, req)

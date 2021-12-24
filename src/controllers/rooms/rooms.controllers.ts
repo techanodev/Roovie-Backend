@@ -1,10 +1,11 @@
 import Controller from '../controllers';
-import {Response, Request} from 'express'
+import { Response, Request } from 'express'
 import ResponseService from '../../services/response.services';
 import RoomCrud from '../../crud/rooms/rooms.crud';
 import Room from '../../models/rooms/rooms.models';
 import RequestService from '../../services/request.services';
 import RoomResource from '../../resources/rooms/rooms.resources';
+import HttpError from '../../errors/http.errors';
 
 /**
  * Controller for rooms
@@ -25,10 +26,10 @@ export default class RoomController extends Controller {
       const roomCrud = new RoomCrud(room)
       room = await roomCrud.createRoom(userId)
       ResponseService
-          .makeNew(res)
-          .model.success
-          .create(room.id, 'اتاق')
-          .response()
+        .makeNew(res)
+        .model.success
+        .create(room.id, 'اتاق')
+        .response()
     } catch (e) {
       ResponseService.handleError(res, e)
     }
@@ -75,7 +76,21 @@ export default class RoomController extends Controller {
   public static listRooms = async (_req: Request, res: Response) => {
     try {
       const rooms = await RoomCrud.listRooms()
-      RoomController.responseModels(res, 'rooms', rooms)
+      RoomController.responseModels(res, 'rooms', rooms, RoomResource)
+    } catch (e) {
+      ResponseService.handleError(res, e)
+    }
+  }
+
+  public static userRooms = async (req: Request, res: Response) => {
+    try {
+      const request = new RequestService(req)
+      const user = await request.user()
+      if (!user || !user.id) {
+        throw HttpError.message.auth.user()
+      }
+      const rooms = await RoomCrud.userRooms(user.id, request.pagination())
+      RoomController.responseModels(res, 'rooms', rooms, RoomResource)
     } catch (e) {
       ResponseService.handleError(res, e)
     }

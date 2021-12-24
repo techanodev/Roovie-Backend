@@ -9,7 +9,7 @@ import {
   NotEmpty,
   Table,
 } from 'sequelize-typescript'
-import {Includeable} from 'sequelize/types'
+import { Includeable, WhereOptions } from 'sequelize/types'
 import Movie from '../movies/movies.models'
 import User from '../users/users.models'
 import UserRoom from './user_rooms.models'
@@ -67,22 +67,22 @@ export default class Room extends Model<Room> implements RoomI {
   @AllowNull(false)
   @NotEmpty
   @ForeignKey(() => Movie)
-  @Column({field: 'movie_id'})
+  @Column({ field: 'movie_id' })
   movieId!: number
 
   @AllowNull(true)
   @Column
   description?: string
 
-  @Column({field: 'start_time'})
+  @Column({ field: 'start_time' })
   startTime?: Date
 
-  @Column({field: 'end_time'})
+  @Column({ field: 'end_time' })
   endTime?: Date
 
   @AllowNull(false)
   @Default(-1)
-  @Column({field: 'max_users'})
+  @Column({ field: 'max_users' })
   maxUsers?: number
 
   @AllowNull(true)
@@ -91,7 +91,7 @@ export default class Room extends Model<Room> implements RoomI {
 
   @AllowNull(false)
   @Default(false)
-  @Column({field: 'is_public'})
+  @Column({ field: 'is_public' })
   isPublic?: boolean
 
   @BelongsTo(() => Movie)
@@ -112,17 +112,21 @@ export default class Room extends Model<Room> implements RoomI {
         model: Movie,
       }
       if (option.movieId) {
-        include.where = {movieId: option.movieId}
+        include.where = { movieId: option.movieId }
       }
       includes.push(include)
     }
     if (option?.user || option?.userId) {
       const include: Includeable = {
-        model: User,
+        model: UserRoom,
+        include: [{
+          model: User
+        }]
       }
       if (option.userId) {
-        include.where = {id: option.userId}
+        include.where = { userId: option.userId }
       }
+      includes.push(include)
     }
     return includes
   }

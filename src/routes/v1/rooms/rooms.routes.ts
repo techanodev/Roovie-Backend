@@ -1,6 +1,6 @@
-import {Router} from 'express'
-import {body} from 'express-validator'
-import {__} from 'i18n'
+import { Router } from 'express'
+import { body } from 'express-validator'
+import { __ } from 'i18n'
 import RoomController from '../../../controllers/rooms/rooms.controllers'
 
 const routes = Router()
@@ -18,6 +18,8 @@ routes.delete('/:id', RoomController.deleteRoom)
 routes.put('/:id', RoomController.updateRoom)
 
 routes.get('/', RoomController.listRooms)
+
+routes.get('/my-rooms', RoomController.userRooms)
 
 routes.get('/:id', RoomController.detailRoom)
 

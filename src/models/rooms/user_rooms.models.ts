@@ -6,20 +6,29 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript'
-import {Includeable} from 'sequelize/types'
-import Movie from '../movies/movies.models'
+import { Includeable } from 'sequelize/types'
 import User from '../users/users.models'
-import Room from './rooms.models'
+import Room, { RoomsIncludeOptions } from './rooms.models'
 
 export type UserRoomIncludeOptions = {
-    /**
-     * Include user model
-     */
-    user?: boolean
-    /**
-     * Include movie model
-     */
-    movie?: boolean
+  /**
+   * Include user model
+   */
+  user?: boolean
+  /**
+   * Include room model
+   */
+  room?: boolean
+
+  /**
+   * Include options for room model
+   */
+  roomIncludeOption?: Includeable[]
+
+  /**
+   * Include options for user model
+   */
+  userIncludeOption?: Includeable[]
 }
 
 export interface UserRoomI {
@@ -40,43 +49,45 @@ export interface UserRoomI {
  * User room model
  */
 export default class UserRoom extends Model<UserRoom> implements UserRoomI {
-    @AllowNull(true)
-    @Column
-    nickname?: string
+  @AllowNull(true)
+  @Column
+  nickname?: string
 
-    @ForeignKey(() => User)
-    @Column({field: 'user_id'})
-    userId!: number
+  @ForeignKey(() => User)
+  @Column({ field: 'user_id' })
+  userId!: number
 
-    @ForeignKey(() => Room)
-    @Column({field: 'room_id'})
-    roomId!: number
+  @ForeignKey(() => Room)
+  @Column({ field: 'room_id' })
+  roomId!: number
 
-    @BelongsTo(() => User)
-    user?: User
+  @BelongsTo(() => User)
+  user?: User
 
-    @BelongsTo(() => Room)
-    room?: Room
+  @BelongsTo(() => Room)
+  room?: Room
 
-    /**
-     * Include models for user room foreign keys
-     * @param {UserRoomIncludeOptions} option
-     * @return {IncludeOptions[]}
-     */
-    static include(option: UserRoomIncludeOptions): Includeable[] {
-      const includes: Includeable[] = []
-      if (option.movie) {
-        const include: Includeable = {
-          model: Movie,
-        }
-        includes.push(include)
+  /**
+   * Include models for user room foreign keys
+   * @param {UserRoomIncludeOptions} option
+   * @return {IncludeOptions[]}
+   */
+  static include(option: UserRoomIncludeOptions): Includeable[] {
+    const includes: Includeable[] = []
+    if (option.room || option.roomIncludeOption) {
+      const include: Includeable = {
+        model: Room,
+        include: option.roomIncludeOption ?? []
       }
-      if (option.user) {
-        const include: Includeable = {
-          model: User,
-        }
-        includes.push(include)
-      }
-      return includes
+      includes.push(include)
     }
+    if (option.user || option.userIncludeOption) {
+      const include: Includeable = {
+        model: User,
+        include: option.userIncludeOption ?? []
+      }
+      includes.push(include)
+    }
+    return includes
+  }
 }
