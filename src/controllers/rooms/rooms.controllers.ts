@@ -44,8 +44,9 @@ export default class RoomController extends Controller {
     try {
       const request = RequestService.newInstance(req)
       const userId = (await request.user())?.id as number
-      const roomId = Number.parseInt(req.params.roomId)
+      const roomId = Number.parseInt(req.params.id)
       await RoomCrud.deleteRoom(roomId, userId)
+      ResponseService.makeNew(res).model.success.delete('اتاق').response()
     } catch (e) {
       ResponseService.handleError(res, e)
     }
@@ -59,10 +60,30 @@ export default class RoomController extends Controller {
   public static updateRoom = async (req: Request, res: Response) => {
     try {
       const request = RequestService.newInstance(req)
-      const userId = (await request.user())?.id as number
-      const roomId = Number.parseInt(req.params.roomId)
+      const userId = (await request.user())?.id
+      if (!userId)
+        throw HttpError.message.auth.user()
+      const roomId = Number.parseInt(req.params.id)
       await RoomCrud.updateRoom(roomId, userId, req.body)
-      ResponseService.makeNew(res).model.success.update('اتاق')
+      ResponseService.makeNew(res).model.success.update('اتاق').response()
+    } catch (e) {
+      ResponseService.handleError(res, e)
+    }
+  }
+
+  /**
+   * Restore a room by Id 
+   * @param {Request} req 
+   * @param {Response} res 
+   */
+  public static restoreRoom = async (req: Request, res: Response) => {
+    try {
+      const request = RequestService.newInstance(req)
+      const userId = (await request.user())?.id
+      if (!userId)
+        throw HttpError.message.auth.user()
+      const roomId = Number.parseInt(req.params.id)
+      await RoomCrud.restoreRoom(roomId, userId)
     } catch (e) {
       ResponseService.handleError(res, e)
     }

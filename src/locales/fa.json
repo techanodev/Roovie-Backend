@@ -22,5 +22,6 @@
 	"MOVIE_REQUEST_NO_URL": "لطفا آدرس اینترنتی فیلم را وارد نمایید.",
 	"MOVIE_REQUEST_INVALID_URL": "آدرس وارد شده نامعتبر می باشد.",
 	"ROOM_REQUEST_NO_TITLE": "نام اتاق برای ساخت اتاق الزامی می باشد.",
-	"ROOM_REQUEST_NO_MOVIE_ID": "شناسه اتاق برای ایجاد اتاق الزامی می باشد."
+	"ROOM_REQUEST_NO_MOVIE_ID": "شناسه اتاق برای ایجاد اتاق الزامی می باشد.",
+	"ROOM_PERMISSION_DENIED": "شما دسترسی برای حذف این اتاق را ندارید."
 }

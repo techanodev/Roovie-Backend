@@ -21,6 +21,11 @@ export type UserRoomIncludeOptions = {
   room?: boolean
 
   /**
+   * Filter user id
+   */
+  userId?: number
+
+  /**
    * Include options for room model
    */
   roomIncludeOption?: Includeable[]
@@ -81,10 +86,13 @@ export default class UserRoom extends Model<UserRoom> implements UserRoomI {
       }
       includes.push(include)
     }
-    if (option.user || option.userIncludeOption) {
+    if (option.user || option.userIncludeOption || option.userId) {
       const include: Includeable = {
         model: User,
         include: option.userIncludeOption ?? []
+      }
+      if (option.userId) {
+        include.where = { userId: option.userId }
       }
       includes.push(include)
     }

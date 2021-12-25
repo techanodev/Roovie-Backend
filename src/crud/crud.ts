@@ -1,4 +1,4 @@
-import {Model} from 'sequelize-typescript'
+import { Model } from 'sequelize-typescript'
 import HttpError from '../errors/http.errors'
 
 /**

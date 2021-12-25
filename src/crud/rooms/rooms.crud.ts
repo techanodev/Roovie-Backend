@@ -41,7 +41,8 @@ export default class RoomCrud extends Crud<Room> {
    * Delete a room
    * this methods has delete all UserRoom models in room
    */
-  async forceDeleteRoom(): Promise<void> {
+  async forceDeleteRoom(userId: number): Promise<void> {
+    await this._checkUserAccessRoom(userId)
     await UserRoom.destroy({ where: { id: this.model.id } })
     return await this.model.destroy({ force: true })
   }
@@ -50,8 +51,18 @@ export default class RoomCrud extends Crud<Room> {
    * Soft delete a room
    * @return {Promise<void>}
    */
-  async deleteRoom(): Promise<void> {
+  async deleteRoom(userId: number): Promise<void> {
+    await this._checkUserAccessRoom(userId)
     return await this.model.destroy()
+  }
+
+  /**
+   * Restore the room has soft deleted
+   * @param {number} userId
+   */
+  async restoreRoom(userId: number): Promise<void> {
+    await this._checkUserAccessRoom(userId)
+    await this.model.restore()
   }
 
   /**
@@ -60,7 +71,8 @@ export default class RoomCrud extends Crud<Room> {
    * @return {Promise<Room>}
    * return updated room
    */
-  async updateRoom(data: RoomI): Promise<Room> {
+  async updateRoom(userId: number, data: RoomI): Promise<Room> {
+    await this._checkUserAccessRoom(userId)
     return this.model.update(data)
   }
 
@@ -73,6 +85,7 @@ export default class RoomCrud extends Crud<Room> {
    * @return {Promise<UserRoom>}
    */
   async addUserToRoom(userId: number): Promise<UserRoom> {
+    await this._checkUserAccessRoom(userId)
     const user = await User.findByPk(userId)
     if (!user) {
       throw HttpError.message.model.notFound('کاربر')
@@ -85,7 +98,8 @@ export default class RoomCrud extends Crud<Room> {
    * @param {number} userId
    * the user you want to remove from list
    */
-  async removeUserFromRoom(userId: number): Promise<void> {
+  async removeUserFromRoom(ownerId: number, userId: number): Promise<void> {
+    await this._checkUserAccessRoom(ownerId)
     const user = await User.findByPk(userId)
     if (!user) {
       throw HttpError.message.model.notFound('کاربر')
@@ -100,7 +114,8 @@ export default class RoomCrud extends Crud<Room> {
    * Add list of users to room
    * @param {number[]} usersIds list of users
    */
-  async addUsersToRoom(usersIds: number[]): Promise<void> {
+  async addUsersToRoom(userId: number, usersIds: number[]): Promise<void> {
+    await this._checkUserAccessRoom(userId)
     const users = await UserCrud.checkListOfUsersExists(usersIds)
     for (const user of users) {
       await this._addUserToRoom(user)
@@ -123,6 +138,12 @@ export default class RoomCrud extends Crud<Room> {
     return userRoom.save()
   }
 
+  private async _checkUserAccessRoom(userId: number) {
+    const userRoom = await UserRoom.findOne({ where: { userId: userId, roomId: this.model.id } })
+    if (!userRoom)
+      throw HttpError.__(403, 'ROOM_PERMISSION_DENIED')
+  }
+
   /**
    * Delete a room by ID
    * @param {number} id identify number of room
@@ -130,12 +151,30 @@ export default class RoomCrud extends Crud<Room> {
    */
   static deleteRoom = async (id: number, userId: number) => {
     const room = await Room
-      .findOne({ where: { id: id }, include: Room.include({ userId: userId }) })
-    if (!room) {
+      .findOne({
+        where: { id: id },
+      })
+    if (!room)
       throw HttpError.message.model.notFound('اتاق')
-    }
     const crud = new RoomCrud(room)
-    await crud.deleteRoom()
+    await crud.deleteRoom(userId)
+  }
+
+  /**
+   * Restore a deleted room by Id
+   * @param {number} userId 
+   */
+  static restoreRoom = async (id: number, userId: number) => {
+    const room = await Room
+      .findOne({
+        where: { id: id },
+        paranoid: false
+      })
+
+    if (!room)
+      throw HttpError.message.model.notFound(RoomCrud.modelName)
+    const crud = new RoomCrud(room)
+    await crud.restoreRoom(userId)
   }
 
   /**
@@ -148,13 +187,15 @@ export default class RoomCrud extends Crud<Room> {
   static updateRoom =
     async (id: number, userId: number, data: RoomI): Promise<Room> => {
       const room = await Room
-        .findOne({ where: { id: id }, include: Room.include({ userId: userId }) })
+        .findOne({
+          where: { id: id }
+        })
 
       if (!room) {
         throw HttpError.message.model.notFound('اتاق')
       }
       const crud = new RoomCrud()
-      return await crud.updateRoom(data)
+      return await crud.updateRoom(userId, data)
     }
 
   /**

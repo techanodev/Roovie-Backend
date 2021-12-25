@@ -17,6 +17,8 @@ routes.delete('/:id', RoomController.deleteRoom)
 
 routes.put('/:id', RoomController.updateRoom)
 
+routes.put('/:id/restore', RoomController.restoreRoom)
+
 routes.get('/', RoomController.listRooms)
 
 routes.get('/my-rooms', RoomController.userRooms)
