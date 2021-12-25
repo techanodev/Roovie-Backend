@@ -173,6 +173,8 @@ export default class RoomCrud extends Crud<Room> {
 
     if (!room)
       throw HttpError.message.model.notFound(RoomCrud.modelName)
+    if (!room.deletedAt)
+      throw HttpError.message.model.alreadyExists(RoomCrud.modelName)
     const crud = new RoomCrud(room)
     await crud.restoreRoom(userId)
   }

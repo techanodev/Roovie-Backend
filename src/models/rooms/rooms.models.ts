@@ -94,6 +94,10 @@ export default class Room extends Model<Room> implements RoomI {
   @Column({ field: 'is_public' })
   isPublic?: boolean
 
+  @AllowNull(true)
+  @Column({ field: 'deleted_at' })
+  deletedAt?: Date
+
   @BelongsTo(() => Movie)
   movie?: Movie
 

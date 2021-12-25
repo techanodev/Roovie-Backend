@@ -84,6 +84,7 @@ export default class RoomController extends Controller {
         throw HttpError.message.auth.user()
       const roomId = Number.parseInt(req.params.id)
       await RoomCrud.restoreRoom(roomId, userId)
+      ResponseService.makeNew(res).model.success.restore(RoomCrud.modelName).response()
     } catch (e) {
       ResponseService.handleError(res, e)
     }

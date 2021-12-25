@@ -37,9 +37,9 @@ export default class HttpError extends Error {
    */
   public static __ =
     (
-        httpCode: number,
-        key: string | i18n.TranslateOptions,
-        options?: i18n.Replacements,
+      httpCode: number,
+      key: string | i18n.TranslateOptions,
+      options?: i18n.Replacements,
     ) => {
       return new HttpError(i18n.__(key, options ?? {}), httpCode)
     }
@@ -53,7 +53,11 @@ export default class HttpError extends Error {
        * @return {HttpError}
        */
       notFound: (modelName?: string) => new HttpError(
-          `${HttpError.fixModelFormat(modelName)}یافت نشد.`, 404),
+        `${HttpError.fixModelFormat(modelName)}یافت نشد.`, 404),
+
+      alreadyExists: (modelName?: string) => new HttpError(
+        `${HttpError.fixModelFormat(modelName)} در حال حاضر موجود می باشد`, 401
+      ),
 
       /**
        * Show a message about a model that not created successfully
@@ -63,10 +67,10 @@ export default class HttpError extends Error {
        */
       notCreated: (modelName?: string) => {
         return new HttpError(
-            `متاسفانه در ایجاد 
+          `متاسفانه در ایجاد 
             ${HttpError.fixModelFormat(modelName)}
               خطایی رخ داده است.`,
-            500,
+          500,
         )
       },
     },
