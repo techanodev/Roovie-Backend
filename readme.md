@@ -1,6 +1,6 @@
-[![Node.js CI](https://github.com/Techano-Developers/Roovie-Backend/actions/workflows/node.js.yml/badge.svg)](https://github.com/Techano-Developers/Roovie-Backend/actions/workflows/node.js.yml)
+# [![Logo][]][Url]
 
-# Roovie Backend
+[![Node.js CI](https://github.com/Techano-Developers/Roovie-Backend/actions/workflows/node.js.yml/badge.svg)](https://github.com/Techano-Developers/Roovie-Backend/actions/workflows/node.js.yml)
 
 **Roovie** is a service that aims to create an environment for watching movies with other people at the same time.
 
@@ -83,3 +83,6 @@ for **build** project you can run this command
     # For start the build of project
     node ./dist/app.js
 ```
+
+[Logo]: ./logo.png
+[Url]: https://roovie.live/
